@@ -52,7 +52,7 @@
   "sourceMap": "61:405:2:-:0;;;;;;;111:10;61:405;;-1:-1:-1;;;;;;61:405:2;111:10;61:405;;;;;;;;;;;;;",
   "deployedSourceMap": "61:405:2:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;61:405:2;;;;;;-1:-1:-1;;;;;61:405:2;228:10;:19;61:405;;;;;;;;;;;-1:-1:-1;;;61:405:2;;;;;;;;;;;;;;;;;-1:-1:-1;;;61:405:2;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;61:405:2;;;;;;;;;;;;;;;;;;;;;;;;128:36;61:405;;;;;;;",
   "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.19;\r\n\r\ncontract Migrations {\r\n    address public owner = msg.sender;\r\n    uint public last_completed_migration;\r\n\r\n    modifier restricted() {\r\n        require(\r\n            msg.sender == owner,\r\n            \"This function is restricted to the contract owner\"\r\n        );\r\n        _;\r\n    }\r\n\r\n    function setCompleted(uint completed) public restricted {\r\n        last_completed_migration = completed;\r\n    }\r\n}\r\n",
-  "sourcePath": "E:\\medinsure\\contracts\\Migrations.sol",
+  "sourcePath": "D:\\MedInsure_mid\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
     "exportedSymbols": {
@@ -461,12 +461,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0x65506E9c3f84a1Dd9f111749Dc56FD05aC416052",
-      "transactionHash": "0xc9a64981ffe11715be483f73740363a5374741c6a9c6649fffe98ee6afd59943"
+      "address": "0xdcfb7344c7565F366166495Ab9520EBEEcc7C7E6",
+      "transactionHash": "0x3cc4d5bbf45f1a4b1b4d9e2ea963c072e2707d96055f936fdd23a23b4f346f98"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2026-03-06T14:23:17.781Z",
+  "updatedAt": "2026-03-23T13:40:57.507Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

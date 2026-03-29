@@ -93,6 +93,7 @@ contract ClaimContract {
     mapping(address => uint256[])     public patientClaims;
     mapping(address => uint256[])     public hospitalClaims;
     mapping(address => bool)          public hasPendingClaim;
+    mapping(bytes32 => bool)          public documentHashUsed;  // duplicate detection
 
     uint256[] public allClaimIds;
 
@@ -149,8 +150,6 @@ contract ClaimContract {
         uint256 claimAmount,
         string memory ipfsCID
     ) public onlyApprovedHospital {
-
-        // ── Validations ──────────────────────────────────────────
 
         require(userRegistry.checkPatientRegistered(patientAddress),  "Patient not registered!");
         require(userRegistry.checkPatientApproved(patientAddress),    "Patient KYC not approved!");
@@ -247,7 +246,7 @@ contract ClaimContract {
     }
 
     // ================================================================
-    // STEP 3A — INSURER APPROVES CLAIM → AUTO ETH TRANSFER
+    // STEP 3A — INSURER APPROVES CLAIM â† AUTO ETH TRANSFER
     // ================================================================
 
     function approveClaim(uint256 claimId) public onlyInsurer {
@@ -361,6 +360,10 @@ contract ClaimContract {
 
     function checkHasPendingClaim(address patient) public view returns (bool) {
         return hasPendingClaim[patient];
+    }
+
+    function checkDocumentHash(bytes32 docHash) public view returns (bool) {
+        return documentHashUsed[docHash];
     }
 
     // ── Allow contract to receive ETH ─────────────────────────────

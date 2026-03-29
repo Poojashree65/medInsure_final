@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import HospitalRegistry from "../../contracts/HospitalRegistry.json";
 import ClaimContract    from "../../contracts/ClaimContract.json";
 
-const CONTRACT_ADDRESS       = "0x7B13E94a2f62D998CBD0e9471a5b750c1FDE2DF6";
-const CLAIM_CONTRACT_ADDRESS = "0x97350Ee0A9168089aCEf311F71A7B32141f4c21C";
+const CONTRACT_ADDRESS       = "0xa844AC1fDf0de42429050B2a34F23afBD5D003d0";
+const CLAIM_CONTRACT_ADDRESS = "0x923E94A65dE82C198e7C3bBA3A2aBf3E122f1f37";
 
 function HospitalDashboard({ account, web3 }) {
   const navigate = useNavigate();
@@ -148,7 +148,7 @@ function HospitalDashboard({ account, web3 }) {
         <div style={S.actionsGrid}>
           <div style={S.actionCard} onClick={() => navigate("/hospital/submit-claim")}>
             <div style={S.actionIconWrap}>
-              <div style={{ ...S.actionIcon, background: "#fff3e0", color: "#e65100" }}>✦</div>
+              <div style={{ ...S.actionIcon, background: "#fff3e0", color: "#e65100" }}>⚠️</div>
             </div>
             <div style={S.actionBody}>
               <div style={S.actionTitle}>Submit New Claim</div>
@@ -158,7 +158,7 @@ function HospitalDashboard({ account, web3 }) {
           </div>
           <div style={S.actionCard} onClick={() => navigate("/hospital/claims")}>
             <div style={S.actionIconWrap}>
-              <div style={{ ...S.actionIcon, background: "#e3f2fd", color: "#1565c0" }}>≡</div>
+              <div style={{ ...S.actionIcon, background: "#e3f2fd", color: "#1565c0" }}>✓</div>
             </div>
             <div style={S.actionBody}>
               <div style={S.actionTitle}>View All Claims</div>
@@ -196,7 +196,7 @@ function HospitalDashboard({ account, web3 }) {
           {/* Blockchain Details */}
           <div style={S.card}>
             <div style={S.cardHeader}>
-              <div style={{ ...S.cardHeaderIcon, background: "#1a237e" }}>⛓</div>
+              <div style={{ ...S.cardHeaderIcon, background: "#1a237e" }}>≡</div>
               <div style={S.cardHeaderTitle}>Blockchain Details</div>
             </div>
             <div style={S.cardBody}>
