@@ -10,7 +10,7 @@ import UserRegistry from "../../contracts/UserRegistry.json";
 
 
 
-const CONTRACT_ADDRESS = "0xf33Cb81168dF3bB94c1549bE9013b66eb058dDe9";
+const CONTRACT_ADDRESS = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
 
 
 

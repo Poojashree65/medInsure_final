@@ -5,21 +5,16 @@ contract PolicyContract {
 
     address public insurer;
 
-    // ================================
-    // STRUCTS
-    // ================================
-
     struct PolicyInput {
         string  policyName;
         uint256 coverageLimit;
-        uint256 premiumAmount;   // Monthly premium in Wei
-        uint256 validityPeriod;  // In years
-        uint256 copayPercent;    // Co-pay % patient pays (e.g. 10 = 10%)
-        uint256 deductible;      // Fixed amount patient pays first (in Wei)
-        uint256 waitingPeriod;   // Days before claims allowed (e.g. 30)
+        uint256 premiumAmount;
+        uint256 validityPeriod;
         string  ipfsCID;
         string  covered;
         string  excluded;
+        uint256 deductible;
+        uint256 copayPercentage;
     }
 
     struct Policy {
@@ -28,14 +23,13 @@ contract PolicyContract {
         uint256 coverageLimit;
         uint256 premiumAmount;
         uint256 validityPeriod;
-        uint256 copayPercent;
-        uint256 deductible;
-        uint256 waitingPeriod;
         string  ipfsCID;
         string  covered;
         string  excluded;
         string  status;
         uint256 timestamp;
+        uint256 deductible;
+        uint256 copayPercentage;
     }
 
     struct Subscription {
@@ -43,10 +37,6 @@ contract PolicyContract {
         uint256 policyId;
         string  policyName;
         uint256 premiumAmount;
-        uint256 coverageLimit;
-        uint256 copayPercent;
-        uint256 deductible;
-        uint256 waitingPeriod;
         uint256 totalPaid;
         uint256 startDate;
         uint256 endDate;
@@ -64,10 +54,6 @@ contract PolicyContract {
         string  status;
     }
 
-    // ================================
-    // STORAGE
-    // ================================
-
     uint256 public policyCount;
     uint256 public subscriptionCount;
 
@@ -78,19 +64,11 @@ contract PolicyContract {
 
     uint256[] public allPolicyIds;
 
-    // ================================
-    // EVENTS
-    // ================================
-
     event PolicyCreated(uint256 policyId, string policyName);
     event PolicySubscribed(address patient, uint256 policyId, string policyName);
     event MonthlyPremiumPaid(address patient, uint256 amount, uint256 monthNumber);
     event PolicySuspended(address patient, string reason);
     event PolicyReactivated(address patient);
-
-    // ================================
-    // MODIFIERS
-    // ================================
 
     modifier onlyInsurer() {
         require(msg.sender == insurer, "Only insurer allowed!");
@@ -102,71 +80,45 @@ contract PolicyContract {
         _;
     }
 
-    // ================================
-    // CONSTRUCTOR
-    // ================================
-
     constructor() {
         insurer = msg.sender;
     }
 
-    // ================================
-    // CREATE POLICY (Insurer only)
-    // ================================
-
     function createPolicy(PolicyInput memory input) public onlyInsurer {
-        require(input.copayPercent <= 100, "Co-pay cannot exceed 100%!");
-        require(input.waitingPeriod <= 365, "Waiting period cannot exceed 365 days!");
-
+        require(input.copayPercentage <= 100, "Copay must be 0-100%");
         policyCount++;
-
         policies[policyCount] = Policy({
-            policyId:       policyCount,
-            policyName:     input.policyName,
-            coverageLimit:  input.coverageLimit,
-            premiumAmount:  input.premiumAmount,
-            validityPeriod: input.validityPeriod,
-            copayPercent:   input.copayPercent,
-            deductible:     input.deductible,
-            waitingPeriod:  input.waitingPeriod,
-            ipfsCID:        input.ipfsCID,
-            covered:        input.covered,
-            excluded:       input.excluded,
-            status:         "Active",
-            timestamp:      block.timestamp
+            policyId:        policyCount,
+            policyName:      input.policyName,
+            coverageLimit:   input.coverageLimit,
+            premiumAmount:   input.premiumAmount,
+            validityPeriod:  input.validityPeriod,
+            ipfsCID:         input.ipfsCID,
+            covered:         input.covered,
+            excluded:        input.excluded,
+            status:          "Active",
+            timestamp:       block.timestamp,
+            deductible:      input.deductible,
+            copayPercentage: input.copayPercentage
         });
-
         allPolicyIds.push(policyCount);
         emit PolicyCreated(policyCount, input.policyName);
     }
 
-    // ================================
-    // SUBSCRIBE POLICY — First Month
-    // ================================
-
     function subscribePolicy(uint256 policyId) public payable {
         require(!hasSubscription[msg.sender], "Already subscribed!");
         require(policyId > 0 && policyId <= policyCount, "Invalid policy!");
-
         Policy memory p = policies[policyId];
-        require(keccak256(bytes(p.status)) == keccak256(bytes("Active")), "Policy is not active!");
         require(msg.value == p.premiumAmount, "Incorrect premium amount!");
-
         payable(insurer).transfer(msg.value);
-
         uint256 start       = block.timestamp;
         uint256 end         = block.timestamp + (p.validityPeriod * 365 days);
         uint256 nextDueDate = block.timestamp + 30 days;
-
         subscriptions[msg.sender] = Subscription({
             patientAddress:     msg.sender,
             policyId:           policyId,
             policyName:         p.policyName,
             premiumAmount:      p.premiumAmount,
-            coverageLimit:      p.coverageLimit,
-            copayPercent:       p.copayPercent,
-            deductible:         p.deductible,
-            waitingPeriod:      p.waitingPeriod,
             totalPaid:          msg.value,
             startDate:          start,
             endDate:            end,
@@ -176,133 +128,64 @@ contract PolicyContract {
             paymentStatus:      "Paid",
             timestamp:          block.timestamp
         });
-
         hasSubscription[msg.sender] = true;
         subscriptionCount++;
-
         paymentHistory[msg.sender].push(PaymentRecord({
             amount:      msg.value,
             paidOn:      block.timestamp,
             monthNumber: 1,
             status:      "Paid"
         }));
-
         emit PolicySubscribed(msg.sender, policyId, p.policyName);
         emit MonthlyPremiumPaid(msg.sender, msg.value, 1);
     }
 
-    // ================================
-    // PAY MONTHLY PREMIUM
-    // ================================
-
     function payMonthlyPremium() public payable hasActiveSub {
         Subscription storage sub = subscriptions[msg.sender];
-
-        require(
-            keccak256(bytes(sub.subscriptionStatus)) != keccak256(bytes("Expired")),
-            "Policy has expired!"
-        );
+        require(keccak256(bytes(sub.subscriptionStatus)) != keccak256(bytes("Expired")), "Policy has expired!");
         require(msg.value == sub.premiumAmount, "Incorrect premium amount!");
         require(block.timestamp >= sub.nextDueDate - 3 days, "Payment not due yet!");
-
         payable(insurer).transfer(msg.value);
-
         sub.totalPaid          += msg.value;
         sub.monthsPaid         += 1;
         sub.nextDueDate        += 30 days;
         sub.paymentStatus       = "Paid";
         sub.subscriptionStatus  = "Active";
-
         if (block.timestamp >= sub.endDate) {
             sub.subscriptionStatus = "Expired";
             sub.paymentStatus      = "Expired";
         }
-
         paymentHistory[msg.sender].push(PaymentRecord({
             amount:      msg.value,
             paidOn:      block.timestamp,
             monthNumber: sub.monthsPaid,
             status:      "Paid"
         }));
-
         emit MonthlyPremiumPaid(msg.sender, msg.value, sub.monthsPaid);
         emit PolicyReactivated(msg.sender);
     }
 
-    // ================================
-    // CHECK & UPDATE STATUS
-    // ================================
-
     function checkPaymentStatus(address patient) public {
         if (!hasSubscription[patient]) return;
-
         Subscription storage sub = subscriptions[patient];
-
         if (keccak256(bytes(sub.subscriptionStatus)) == keccak256(bytes("Expired"))) return;
-
         if (block.timestamp >= sub.endDate) {
             sub.subscriptionStatus = "Expired";
             sub.paymentStatus      = "Expired";
             return;
         }
-
         if (block.timestamp > sub.nextDueDate + 7 days) {
             sub.subscriptionStatus = "Suspended";
             sub.paymentStatus      = "Overdue";
             emit PolicySuspended(patient, "Payment overdue!");
             return;
         }
-
         if (block.timestamp >= sub.nextDueDate - 3 days) {
             sub.paymentStatus = "Due";
             return;
         }
-
         sub.paymentStatus = "Paid";
     }
-
-    // ================================
-    // WAITING PERIOD CHECK (Phase 2 - Claims)
-    // ================================
-
-    function isWaitingPeriodOver(address patient) public view returns (bool) {
-        if (!hasSubscription[patient]) return false;
-        return true;
-    }
-
-    // ================================
-    // CLAIM PAYOUT CALCULATION (Phase 2 - Claims)
-    // Returns how much patient pays vs insurer pays
-    // ================================
-
-    function calculateClaimPayout(address patient, uint256 claimAmount) public view returns (
-        uint256 patientPays,
-        uint256 insurerPays
-    ) {
-        require(hasSubscription[patient], "No subscription found!");
-        Subscription memory sub = subscriptions[patient];
-
-        // Patient pays deductible first
-        uint256 afterDeductible = claimAmount > sub.deductible
-            ? claimAmount - sub.deductible
-            : 0;
-
-        // Co-pay applied on remaining amount
-        uint256 copayAmount = (afterDeductible * sub.copayPercent) / 100;
-
-        // Final split
-        patientPays = sub.deductible + copayAmount;
-        insurerPays = afterDeductible - copayAmount;
-
-        // Cannot exceed coverage limit
-        if (insurerPays > sub.coverageLimit) {
-            insurerPays = sub.coverageLimit;
-        }
-    }
-
-    // ================================
-    // VIEW FUNCTIONS
-    // ================================
 
     function getAllPolicies() public view returns (uint256[] memory) {
         return allPolicyIds;
@@ -335,5 +218,80 @@ contract PolicyContract {
         Subscription memory sub = subscriptions[patient];
         if (block.timestamp >= sub.nextDueDate) return 0;
         return (sub.nextDueDate - block.timestamp) / 1 days;
+    }
+
+    // ================================
+    // ELIGIBILITY CHECK
+    // ================================
+
+    function checkEligibility(address patient) public view returns (
+        bool   eligible,
+        string memory policyName,
+        uint256 coverageLimit,
+        uint256 remainingCoverage,
+        uint256 deductible,
+        bool   deductibleMet,
+        uint256 copayPercentage,
+        string memory subscriptionStatus,
+        string memory paymentStatus,
+        string memory message
+    ) {
+        if (!hasSubscription[patient]) {
+            return (false, "", 0, 0, 0, false, 0, "No Subscription", "N/A",
+                "Patient does not have an active insurance policy");
+        }
+        Subscription memory sub = subscriptions[patient];
+        Policy memory policy    = policies[sub.policyId];
+
+        if (keccak256(bytes(sub.subscriptionStatus)) != keccak256(bytes("Active"))) {
+            return (false, sub.policyName, policy.coverageLimit, 0, policy.deductible, false,
+                policy.copayPercentage, sub.subscriptionStatus, sub.paymentStatus,
+                string(abi.encodePacked("Policy is ", sub.subscriptionStatus, ". Please contact insurer.")));
+        }
+        if (keccak256(bytes(sub.paymentStatus)) == keccak256(bytes("Overdue"))) {
+            return (false, sub.policyName, policy.coverageLimit, policy.coverageLimit,
+                policy.deductible, false, policy.copayPercentage, sub.subscriptionStatus,
+                sub.paymentStatus, "Payment is overdue. Please pay premium to restore coverage.");
+        }
+        if (block.timestamp > sub.endDate) {
+            return (false, sub.policyName, policy.coverageLimit, 0, policy.deductible, false,
+                policy.copayPercentage, "Expired", sub.paymentStatus,
+                "Policy has expired. Please renew to continue coverage.");
+        }
+        return (true, sub.policyName, policy.coverageLimit, policy.coverageLimit,
+            policy.deductible, false, policy.copayPercentage, sub.subscriptionStatus,
+            sub.paymentStatus, "Patient is eligible for coverage. Treatment can proceed.");
+    }
+
+    function isEligible(address patient) public view returns (bool) {
+        if (!hasSubscription[patient]) return false;
+        Subscription memory sub = subscriptions[patient];
+        return (
+            keccak256(bytes(sub.subscriptionStatus)) == keccak256(bytes("Active")) &&
+            keccak256(bytes(sub.paymentStatus))      != keccak256(bytes("Overdue")) &&
+            block.timestamp <= sub.endDate
+        );
+    }
+
+    // ================================
+    // CLAIM PAYOUT CALCULATION
+    // ================================
+
+    function calculateClaimPayout(address patient, uint256 claimAmount) public view returns (
+        uint256 patientPays,
+        uint256 insurerPays
+    ) {
+        require(hasSubscription[patient], "No subscription found!");
+        Subscription memory sub = subscriptions[patient];
+        Policy memory policy    = policies[sub.policyId];
+
+        uint256 afterDeductible = claimAmount > policy.deductible
+            ? claimAmount - policy.deductible : 0;
+        uint256 copayAmount = (afterDeductible * policy.copayPercentage) / 100;
+        patientPays = policy.deductible + copayAmount;
+        insurerPays = afterDeductible - copayAmount;
+        if (insurerPays > policy.coverageLimit) {
+            insurerPays = policy.coverageLimit;
+        }
     }
 }

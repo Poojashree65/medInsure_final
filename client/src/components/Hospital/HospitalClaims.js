@@ -6,7 +6,7 @@ import ClaimContract from "../../contracts/ClaimContract.json";
 
 
 
-const CLAIM_CONTRACT_ADDRESS = "0x923E94A65dE82C198e7C3bBA3A2aBf3E122f1f37";
+const CLAIM_CONTRACT_ADDRESS = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
 
 
 

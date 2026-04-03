@@ -366,15 +366,15 @@
     "absolutePath": "project:/contracts/HospitalRegistry.sol",
     "exportedSymbols": {
       "HospitalRegistry": [
-        1274
+        1228
       ]
     },
-    "id": 1275,
+    "id": 1229,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1067,
+        "id": 1021,
         "literals": [
           "solidity",
           "^",
@@ -391,9 +391,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 1274,
+        "id": 1228,
         "linearizedBaseContracts": [
-          1274
+          1228
         ],
         "name": "HospitalRegistry",
         "nameLocation": "69:16:1",
@@ -402,12 +402,12 @@
           {
             "constant": false,
             "functionSelector": "dbc837c5",
-            "id": 1069,
+            "id": 1023,
             "mutability": "mutable",
             "name": "insurer",
             "nameLocation": "110:7:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1274,
+            "scope": 1228,
             "src": "95:22:1",
             "stateVariable": true,
             "storageLocation": "default",
@@ -416,7 +416,7 @@
               "typeString": "address"
             },
             "typeName": {
-              "id": 1068,
+              "id": 1022,
               "name": "address",
               "nodeType": "ElementaryTypeName",
               "src": "95:7:1",
@@ -430,16 +430,16 @@
           },
           {
             "canonicalName": "HospitalRegistry.Hospital",
-            "id": 1090,
+            "id": 1044,
             "members": [
               {
                 "constant": false,
-                "id": 1071,
+                "id": 1025,
                 "mutability": "mutable",
                 "name": "hospitalId",
                 "nameLocation": "158:10:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "153:15:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -448,7 +448,7 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 1070,
+                  "id": 1024,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
                   "src": "153:4:1",
@@ -461,12 +461,12 @@
               },
               {
                 "constant": false,
-                "id": 1073,
+                "id": 1027,
                 "mutability": "mutable",
                 "name": "name",
                 "nameLocation": "186:4:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "179:11:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -475,7 +475,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1072,
+                  "id": 1026,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "179:6:1",
@@ -488,12 +488,12 @@
               },
               {
                 "constant": false,
-                "id": 1075,
+                "id": 1029,
                 "mutability": "mutable",
                 "name": "location",
                 "nameLocation": "208:8:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "201:15:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -502,7 +502,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1074,
+                  "id": 1028,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "201:6:1",
@@ -515,12 +515,12 @@
               },
               {
                 "constant": false,
-                "id": 1077,
+                "id": 1031,
                 "mutability": "mutable",
                 "name": "city",
                 "nameLocation": "234:4:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "227:11:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -529,7 +529,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1076,
+                  "id": 1030,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "227:6:1",
@@ -542,12 +542,12 @@
               },
               {
                 "constant": false,
-                "id": 1079,
+                "id": 1033,
                 "mutability": "mutable",
                 "name": "state",
                 "nameLocation": "256:5:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "249:12:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -556,7 +556,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1078,
+                  "id": 1032,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "249:6:1",
@@ -569,12 +569,12 @@
               },
               {
                 "constant": false,
-                "id": 1081,
+                "id": 1035,
                 "mutability": "mutable",
                 "name": "pincode",
                 "nameLocation": "279:7:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "272:14:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -583,7 +583,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1080,
+                  "id": 1034,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "272:6:1",
@@ -596,12 +596,12 @@
               },
               {
                 "constant": false,
-                "id": 1083,
+                "id": 1037,
                 "mutability": "mutable",
                 "name": "licenseNumber",
                 "nameLocation": "304:13:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "297:20:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -610,7 +610,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1082,
+                  "id": 1036,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "297:6:1",
@@ -623,12 +623,12 @@
               },
               {
                 "constant": false,
-                "id": 1085,
+                "id": 1039,
                 "mutability": "mutable",
                 "name": "walletAddress",
                 "nameLocation": "336:13:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "328:21:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -637,7 +637,7 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 1084,
+                  "id": 1038,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
                   "src": "328:7:1",
@@ -651,12 +651,12 @@
               },
               {
                 "constant": false,
-                "id": 1087,
+                "id": 1041,
                 "mutability": "mutable",
                 "name": "status",
                 "nameLocation": "367:6:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "360:13:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -665,7 +665,7 @@
                   "typeString": "string"
                 },
                 "typeName": {
-                  "id": 1086,
+                  "id": 1040,
                   "name": "string",
                   "nodeType": "ElementaryTypeName",
                   "src": "360:6:1",
@@ -678,12 +678,12 @@
               },
               {
                 "constant": false,
-                "id": 1089,
+                "id": 1043,
                 "mutability": "mutable",
                 "name": "timestamp",
                 "nameLocation": "389:9:1",
                 "nodeType": "VariableDeclaration",
-                "scope": 1090,
+                "scope": 1044,
                 "src": "384:14:1",
                 "stateVariable": false,
                 "storageLocation": "default",
@@ -692,7 +692,7 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 1088,
+                  "id": 1042,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
                   "src": "384:4:1",
@@ -707,19 +707,19 @@
             "name": "Hospital",
             "nameLocation": "133:8:1",
             "nodeType": "StructDefinition",
-            "scope": 1274,
+            "scope": 1228,
             "src": "126:280:1",
             "visibility": "public"
           },
           {
             "constant": false,
             "functionSelector": "350dadb7",
-            "id": 1093,
+            "id": 1047,
             "mutability": "mutable",
             "name": "hospitalCount",
             "nameLocation": "426:13:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1274,
+            "scope": 1228,
             "src": "414:29:1",
             "stateVariable": true,
             "storageLocation": "default",
@@ -728,7 +728,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1091,
+              "id": 1045,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "414:4:1",
@@ -739,7 +739,7 @@
             },
             "value": {
               "hexValue": "30",
-              "id": 1092,
+              "id": 1046,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -758,25 +758,25 @@
           {
             "constant": false,
             "functionSelector": "f093cf80",
-            "id": 1098,
+            "id": 1052,
             "mutability": "mutable",
             "name": "hospitals",
             "nameLocation": "488:9:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1274,
+            "scope": 1228,
             "src": "452:45:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1090_storage_$",
+              "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1044_storage_$",
               "typeString": "mapping(address => struct HospitalRegistry.Hospital)"
             },
             "typeName": {
-              "id": 1097,
+              "id": 1051,
               "keyName": "",
               "keyNameLocation": "-1:-1:-1",
               "keyType": {
-                "id": 1094,
+                "id": 1048,
                 "name": "address",
                 "nodeType": "ElementaryTypeName",
                 "src": "460:7:1",
@@ -788,28 +788,28 @@
               "nodeType": "Mapping",
               "src": "452:28:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1090_storage_$",
+                "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1044_storage_$",
                 "typeString": "mapping(address => struct HospitalRegistry.Hospital)"
               },
               "valueName": "",
               "valueNameLocation": "-1:-1:-1",
               "valueType": {
-                "id": 1096,
+                "id": 1050,
                 "nodeType": "UserDefinedTypeName",
                 "pathNode": {
-                  "id": 1095,
+                  "id": 1049,
                   "name": "Hospital",
                   "nameLocations": [
                     "471:8:1"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 1090,
+                  "referencedDeclaration": 1044,
                   "src": "471:8:1"
                 },
-                "referencedDeclaration": 1090,
+                "referencedDeclaration": 1044,
                 "src": "471:8:1",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_struct$_Hospital_$1090_storage_ptr",
+                  "typeIdentifier": "t_struct$_Hospital_$1044_storage_ptr",
                   "typeString": "struct HospitalRegistry.Hospital"
                 }
               }
@@ -819,12 +819,12 @@
           {
             "constant": false,
             "functionSelector": "c3c5a547",
-            "id": 1102,
+            "id": 1056,
             "mutability": "mutable",
             "name": "isRegistered",
             "nameLocation": "536:12:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1274,
+            "scope": 1228,
             "src": "504:44:1",
             "stateVariable": true,
             "storageLocation": "default",
@@ -833,11 +833,11 @@
               "typeString": "mapping(address => bool)"
             },
             "typeName": {
-              "id": 1101,
+              "id": 1055,
               "keyName": "",
               "keyNameLocation": "-1:-1:-1",
               "keyType": {
-                "id": 1099,
+                "id": 1053,
                 "name": "address",
                 "nodeType": "ElementaryTypeName",
                 "src": "512:7:1",
@@ -855,7 +855,7 @@
               "valueName": "",
               "valueNameLocation": "-1:-1:-1",
               "valueType": {
-                "id": 1100,
+                "id": 1054,
                 "name": "bool",
                 "nodeType": "ElementaryTypeName",
                 "src": "523:4:1",
@@ -870,12 +870,12 @@
           {
             "constant": false,
             "functionSelector": "4f3b8b99",
-            "id": 1106,
+            "id": 1060,
             "mutability": "mutable",
             "name": "isApprovedHospital",
             "nameLocation": "587:18:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1274,
+            "scope": 1228,
             "src": "555:50:1",
             "stateVariable": true,
             "storageLocation": "default",
@@ -884,11 +884,11 @@
               "typeString": "mapping(address => bool)"
             },
             "typeName": {
-              "id": 1105,
+              "id": 1059,
               "keyName": "",
               "keyNameLocation": "-1:-1:-1",
               "keyType": {
-                "id": 1103,
+                "id": 1057,
                 "name": "address",
                 "nodeType": "ElementaryTypeName",
                 "src": "563:7:1",
@@ -906,7 +906,7 @@
               "valueName": "",
               "valueNameLocation": "-1:-1:-1",
               "valueType": {
-                "id": 1104,
+                "id": 1058,
                 "name": "bool",
                 "nodeType": "ElementaryTypeName",
                 "src": "574:4:1",
@@ -921,23 +921,23 @@
           {
             "anonymous": false,
             "eventSelector": "db747e1fe98df8d3a1970d8c2599365d8a61f804943b4c866584e1baae6b99da",
-            "id": 1118,
+            "id": 1072,
             "name": "HospitalRegistered",
             "nameLocation": "620:18:1",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 1117,
+              "id": 1071,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1108,
+                  "id": 1062,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "hospitalId",
                   "nameLocation": "644:10:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1118,
+                  "scope": 1072,
                   "src": "639:15:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -946,7 +946,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1107,
+                    "id": 1061,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "639:4:1",
@@ -959,13 +959,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1110,
+                  "id": 1064,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "name",
                   "nameLocation": "663:4:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1118,
+                  "scope": 1072,
                   "src": "656:11:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -974,7 +974,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1109,
+                    "id": 1063,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "656:6:1",
@@ -987,13 +987,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1112,
+                  "id": 1066,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "city",
                   "nameLocation": "676:4:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1118,
+                  "scope": 1072,
                   "src": "669:11:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1002,7 +1002,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1111,
+                    "id": 1065,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "669:6:1",
@@ -1015,13 +1015,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1114,
+                  "id": 1068,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "walletAddress",
                   "nameLocation": "690:13:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1118,
+                  "scope": 1072,
                   "src": "682:21:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1030,7 +1030,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1113,
+                    "id": 1067,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "682:7:1",
@@ -1044,13 +1044,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1116,
+                  "id": 1070,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "timestamp",
                   "nameLocation": "710:9:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1118,
+                  "scope": 1072,
                   "src": "705:14:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1059,7 +1059,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1115,
+                    "id": 1069,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "705:4:1",
@@ -1077,7 +1077,7 @@
           },
           {
             "body": {
-              "id": 1129,
+              "id": 1083,
               "nodeType": "Block",
               "src": "752:89:1",
               "statements": [
@@ -1089,14 +1089,14 @@
                           "typeIdentifier": "t_address",
                           "typeString": "address"
                         },
-                        "id": 1124,
+                        "id": 1078,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "expression": {
-                            "id": 1121,
+                            "id": 1075,
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -1107,7 +1107,7 @@
                               "typeString": "msg"
                             }
                           },
-                          "id": 1122,
+                          "id": 1076,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1124,11 +1124,11 @@
                         "nodeType": "BinaryOperation",
                         "operator": "==",
                         "rightExpression": {
-                          "id": 1123,
+                          "id": 1077,
                           "name": "insurer",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1069,
+                          "referencedDeclaration": 1023,
                           "src": "785:7:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -1143,7 +1143,7 @@
                       },
                       {
                         "hexValue": "4f6e6c7920696e73757265722063616e20646f2074686973",
-                        "id": 1125,
+                        "id": 1079,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1169,7 +1169,7 @@
                           "typeString": "literal_string \"Only insurer can do this\""
                         }
                       ],
-                      "id": 1120,
+                      "id": 1074,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -1183,7 +1183,7 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 1126,
+                    "id": 1080,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1199,23 +1199,23 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1127,
+                  "id": 1081,
                   "nodeType": "ExpressionStatement",
                   "src": "763:58:1"
                 },
                 {
-                  "id": 1128,
+                  "id": 1082,
                   "nodeType": "PlaceholderStatement",
                   "src": "832:1:1"
                 }
               ]
             },
-            "id": 1130,
+            "id": 1084,
             "name": "onlyInsurer",
             "nameLocation": "738:11:1",
             "nodeType": "ModifierDefinition",
             "parameters": {
-              "id": 1119,
+              "id": 1073,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "749:2:1"
@@ -1226,23 +1226,23 @@
           },
           {
             "body": {
-              "id": 1138,
+              "id": 1092,
               "nodeType": "Block",
               "src": "863:39:1",
               "statements": [
                 {
                   "expression": {
-                    "id": 1136,
+                    "id": 1090,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
-                      "id": 1133,
+                      "id": 1087,
                       "name": "insurer",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1069,
+                      "referencedDeclaration": 1023,
                       "src": "874:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -1253,7 +1253,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "expression": {
-                        "id": 1134,
+                        "id": 1088,
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
@@ -1264,7 +1264,7 @@
                           "typeString": "msg"
                         }
                       },
-                      "id": 1135,
+                      "id": 1089,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1284,13 +1284,13 @@
                       "typeString": "address"
                     }
                   },
-                  "id": 1137,
+                  "id": 1091,
                   "nodeType": "ExpressionStatement",
                   "src": "874:20:1"
                 }
               ]
             },
-            "id": 1139,
+            "id": 1093,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
@@ -1298,18 +1298,18 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1131,
+              "id": 1085,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "860:2:1"
             },
             "returnParameters": {
-              "id": 1132,
+              "id": 1086,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "863:0:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "849:53:1",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -1317,7 +1317,7 @@
           },
           {
             "body": {
-              "id": 1208,
+              "id": 1162,
               "nodeType": "Block",
               "src": "1192:627:1",
               "statements": [
@@ -1325,7 +1325,7 @@
                   "expression": {
                     "arguments": [
                       {
-                        "id": 1162,
+                        "id": 1116,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1336,24 +1336,24 @@
                         "src": "1211:29:1",
                         "subExpression": {
                           "baseExpression": {
-                            "id": 1159,
+                            "id": 1113,
                             "name": "isRegistered",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1102,
+                            "referencedDeclaration": 1056,
                             "src": "1212:12:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                               "typeString": "mapping(address => bool)"
                             }
                           },
-                          "id": 1161,
+                          "id": 1115,
                           "indexExpression": {
-                            "id": 1160,
+                            "id": 1114,
                             "name": "_walletAddress",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 1153,
+                            "referencedDeclaration": 1107,
                             "src": "1225:14:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_address",
@@ -1378,7 +1378,7 @@
                       },
                       {
                         "hexValue": "486f73706974616c20616c72656164792072656769737465726564",
-                        "id": 1163,
+                        "id": 1117,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1404,7 +1404,7 @@
                           "typeString": "literal_string \"Hospital already registered\""
                         }
                       ],
-                      "id": 1158,
+                      "id": 1112,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -1418,7 +1418,7 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 1164,
+                    "id": 1118,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1434,13 +1434,13 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1165,
+                  "id": 1119,
                   "nodeType": "ExpressionStatement",
                   "src": "1203:69:1"
                 },
                 {
                   "expression": {
-                    "id": 1167,
+                    "id": 1121,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1450,11 +1450,11 @@
                     "prefix": false,
                     "src": "1285:15:1",
                     "subExpression": {
-                      "id": 1166,
+                      "id": 1120,
                       "name": "hospitalCount",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1093,
+                      "referencedDeclaration": 1047,
                       "src": "1285:13:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1466,37 +1466,37 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 1168,
+                  "id": 1122,
                   "nodeType": "ExpressionStatement",
                   "src": "1285:15:1"
                 },
                 {
                   "expression": {
-                    "id": 1185,
+                    "id": 1139,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "baseExpression": {
-                        "id": 1169,
+                        "id": 1123,
                         "name": "hospitals",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1098,
+                        "referencedDeclaration": 1052,
                         "src": "1313:9:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1090_storage_$",
+                          "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1044_storage_$",
                           "typeString": "mapping(address => struct HospitalRegistry.Hospital storage ref)"
                         }
                       },
-                      "id": 1171,
+                      "id": 1125,
                       "indexExpression": {
-                        "id": 1170,
+                        "id": 1124,
                         "name": "_walletAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1153,
+                        "referencedDeclaration": 1107,
                         "src": "1323:14:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1510,7 +1510,7 @@
                       "nodeType": "IndexAccess",
                       "src": "1313:25:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Hospital_$1090_storage",
+                        "typeIdentifier": "t_struct$_Hospital_$1044_storage",
                         "typeString": "struct HospitalRegistry.Hospital storage ref"
                       }
                     },
@@ -1519,11 +1519,11 @@
                     "rightHandSide": {
                       "arguments": [
                         {
-                          "id": 1173,
+                          "id": 1127,
                           "name": "hospitalCount",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1093,
+                          "referencedDeclaration": 1047,
                           "src": "1364:13:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -1531,11 +1531,11 @@
                           }
                         },
                         {
-                          "id": 1174,
+                          "id": 1128,
                           "name": "_name",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1141,
+                          "referencedDeclaration": 1095,
                           "src": "1392:5:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1543,11 +1543,11 @@
                           }
                         },
                         {
-                          "id": 1175,
+                          "id": 1129,
                           "name": "_location",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1143,
+                          "referencedDeclaration": 1097,
                           "src": "1412:9:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1555,11 +1555,11 @@
                           }
                         },
                         {
-                          "id": 1176,
+                          "id": 1130,
                           "name": "_city",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1145,
+                          "referencedDeclaration": 1099,
                           "src": "1436:5:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1567,11 +1567,11 @@
                           }
                         },
                         {
-                          "id": 1177,
+                          "id": 1131,
                           "name": "_state",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1147,
+                          "referencedDeclaration": 1101,
                           "src": "1456:6:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1579,11 +1579,11 @@
                           }
                         },
                         {
-                          "id": 1178,
+                          "id": 1132,
                           "name": "_pincode",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1149,
+                          "referencedDeclaration": 1103,
                           "src": "1477:8:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1591,11 +1591,11 @@
                           }
                         },
                         {
-                          "id": 1179,
+                          "id": 1133,
                           "name": "_licenseNumber",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1151,
+                          "referencedDeclaration": 1105,
                           "src": "1500:14:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_string_memory_ptr",
@@ -1603,11 +1603,11 @@
                           }
                         },
                         {
-                          "id": 1180,
+                          "id": 1134,
                           "name": "_walletAddress",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1153,
+                          "referencedDeclaration": 1107,
                           "src": "1529:14:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -1616,7 +1616,7 @@
                         },
                         {
                           "hexValue": "416374697665",
-                          "id": 1181,
+                          "id": 1135,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -1632,7 +1632,7 @@
                         },
                         {
                           "expression": {
-                            "id": 1182,
+                            "id": 1136,
                             "name": "block",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -1643,7 +1643,7 @@
                               "typeString": "block"
                             }
                           },
-                          "id": 1183,
+                          "id": 1137,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1701,18 +1701,18 @@
                             "typeString": "uint256"
                           }
                         ],
-                        "id": 1172,
+                        "id": 1126,
                         "name": "Hospital",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1090,
+                        "referencedDeclaration": 1044,
                         "src": "1341:8:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_struct$_Hospital_$1090_storage_ptr_$",
+                          "typeIdentifier": "t_type$_t_struct$_Hospital_$1044_storage_ptr_$",
                           "typeString": "type(struct HospitalRegistry.Hospital storage pointer)"
                         }
                       },
-                      "id": 1184,
+                      "id": 1138,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1724,47 +1724,47 @@
                       "src": "1341:266:1",
                       "tryCall": false,
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Hospital_$1090_memory_ptr",
+                        "typeIdentifier": "t_struct$_Hospital_$1044_memory_ptr",
                         "typeString": "struct HospitalRegistry.Hospital memory"
                       }
                     },
                     "src": "1313:294:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Hospital_$1090_storage",
+                      "typeIdentifier": "t_struct$_Hospital_$1044_storage",
                       "typeString": "struct HospitalRegistry.Hospital storage ref"
                     }
                   },
-                  "id": 1186,
+                  "id": 1140,
                   "nodeType": "ExpressionStatement",
                   "src": "1313:294:1"
                 },
                 {
                   "expression": {
-                    "id": 1191,
+                    "id": 1145,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "baseExpression": {
-                        "id": 1187,
+                        "id": 1141,
                         "name": "isRegistered",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1102,
+                        "referencedDeclaration": 1056,
                         "src": "1620:12:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                           "typeString": "mapping(address => bool)"
                         }
                       },
-                      "id": 1189,
+                      "id": 1143,
                       "indexExpression": {
-                        "id": 1188,
+                        "id": 1142,
                         "name": "_walletAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1153,
+                        "referencedDeclaration": 1107,
                         "src": "1633:14:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1786,7 +1786,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 1190,
+                      "id": 1144,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1806,37 +1806,37 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 1192,
+                  "id": 1146,
                   "nodeType": "ExpressionStatement",
                   "src": "1620:41:1"
                 },
                 {
                   "expression": {
-                    "id": 1197,
+                    "id": 1151,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "baseExpression": {
-                        "id": 1193,
+                        "id": 1147,
                         "name": "isApprovedHospital",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1106,
+                        "referencedDeclaration": 1060,
                         "src": "1672:18:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                           "typeString": "mapping(address => bool)"
                         }
                       },
-                      "id": 1195,
+                      "id": 1149,
                       "indexExpression": {
-                        "id": 1194,
+                        "id": 1148,
                         "name": "_walletAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1153,
+                        "referencedDeclaration": 1107,
                         "src": "1691:14:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1858,7 +1858,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 1196,
+                      "id": 1150,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1878,7 +1878,7 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 1198,
+                  "id": 1152,
                   "nodeType": "ExpressionStatement",
                   "src": "1672:41:1"
                 },
@@ -1886,11 +1886,11 @@
                   "eventCall": {
                     "arguments": [
                       {
-                        "id": 1200,
+                        "id": 1154,
                         "name": "hospitalCount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1093,
+                        "referencedDeclaration": 1047,
                         "src": "1750:13:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1898,11 +1898,11 @@
                         }
                       },
                       {
-                        "id": 1201,
+                        "id": 1155,
                         "name": "_name",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1141,
+                        "referencedDeclaration": 1095,
                         "src": "1765:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_memory_ptr",
@@ -1910,11 +1910,11 @@
                         }
                       },
                       {
-                        "id": 1202,
+                        "id": 1156,
                         "name": "_city",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1145,
+                        "referencedDeclaration": 1099,
                         "src": "1772:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_string_memory_ptr",
@@ -1922,11 +1922,11 @@
                         }
                       },
                       {
-                        "id": 1203,
+                        "id": 1157,
                         "name": "_walletAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1153,
+                        "referencedDeclaration": 1107,
                         "src": "1779:14:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1935,7 +1935,7 @@
                       },
                       {
                         "expression": {
-                          "id": 1204,
+                          "id": 1158,
                           "name": "block",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
@@ -1946,7 +1946,7 @@
                             "typeString": "block"
                           }
                         },
-                        "id": 1205,
+                        "id": 1159,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1984,18 +1984,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 1199,
+                      "id": 1153,
                       "name": "HospitalRegistered",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1118,
+                      "referencedDeclaration": 1072,
                       "src": "1731:18:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_uint256_$_t_string_memory_ptr_$_t_string_memory_ptr_$_t_address_$_t_uint256_$returns$__$",
                         "typeString": "function (uint256,string memory,string memory,address,uint256)"
                       }
                     },
-                    "id": 1206,
+                    "id": 1160,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2011,28 +2011,28 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1207,
+                  "id": 1161,
                   "nodeType": "EmitStatement",
                   "src": "1726:85:1"
                 }
               ]
             },
             "functionSelector": "2ed0e9cb",
-            "id": 1209,
+            "id": 1163,
             "implemented": true,
             "kind": "function",
             "modifiers": [
               {
-                "id": 1156,
+                "id": 1110,
                 "kind": "modifierInvocation",
                 "modifierName": {
-                  "id": 1155,
+                  "id": 1109,
                   "name": "onlyInsurer",
                   "nameLocations": [
                     "1180:11:1"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 1130,
+                  "referencedDeclaration": 1084,
                   "src": "1180:11:1"
                 },
                 "nodeType": "ModifierInvocation",
@@ -2043,17 +2043,17 @@
             "nameLocation": "919:16:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1154,
+              "id": 1108,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1141,
+                  "id": 1095,
                   "mutability": "mutable",
                   "name": "_name",
                   "nameLocation": "960:5:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "946:19:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2062,7 +2062,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1140,
+                    "id": 1094,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "946:6:1",
@@ -2075,12 +2075,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1143,
+                  "id": 1097,
                   "mutability": "mutable",
                   "name": "_location",
                   "nameLocation": "990:9:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "976:23:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2089,7 +2089,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1142,
+                    "id": 1096,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "976:6:1",
@@ -2102,12 +2102,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1145,
+                  "id": 1099,
                   "mutability": "mutable",
                   "name": "_city",
                   "nameLocation": "1024:5:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "1010:19:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2116,7 +2116,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1144,
+                    "id": 1098,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1010:6:1",
@@ -2129,12 +2129,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1147,
+                  "id": 1101,
                   "mutability": "mutable",
                   "name": "_state",
                   "nameLocation": "1054:6:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "1040:20:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2143,7 +2143,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1146,
+                    "id": 1100,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1040:6:1",
@@ -2156,12 +2156,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1149,
+                  "id": 1103,
                   "mutability": "mutable",
                   "name": "_pincode",
                   "nameLocation": "1085:8:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "1071:22:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2170,7 +2170,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1148,
+                    "id": 1102,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1071:6:1",
@@ -2183,12 +2183,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1151,
+                  "id": 1105,
                   "mutability": "mutable",
                   "name": "_licenseNumber",
                   "nameLocation": "1118:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "1104:28:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2197,7 +2197,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1150,
+                    "id": 1104,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "1104:6:1",
@@ -2210,12 +2210,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 1153,
+                  "id": 1107,
                   "mutability": "mutable",
                   "name": "_walletAddress",
                   "nameLocation": "1151:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1209,
+                  "scope": 1163,
                   "src": "1143:22:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2224,7 +2224,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1152,
+                    "id": 1106,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1143:7:1",
@@ -2240,12 +2240,12 @@
               "src": "935:237:1"
             },
             "returnParameters": {
-              "id": 1157,
+              "id": 1111,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1192:0:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "910:909:1",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -2253,7 +2253,7 @@
           },
           {
             "body": {
-              "id": 1228,
+              "id": 1182,
               "nodeType": "Block",
               "src": "1910:126:1",
               "statements": [
@@ -2262,24 +2262,24 @@
                     "arguments": [
                       {
                         "baseExpression": {
-                          "id": 1218,
+                          "id": 1172,
                           "name": "isRegistered",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1102,
+                          "referencedDeclaration": 1056,
                           "src": "1929:12:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                             "typeString": "mapping(address => bool)"
                           }
                         },
-                        "id": 1220,
+                        "id": 1174,
                         "indexExpression": {
-                          "id": 1219,
+                          "id": 1173,
                           "name": "_walletAddress",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1211,
+                          "referencedDeclaration": 1165,
                           "src": "1942:14:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -2299,7 +2299,7 @@
                       },
                       {
                         "hexValue": "486f73706974616c206e6f742072656769737465726564",
-                        "id": 1221,
+                        "id": 1175,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -2325,7 +2325,7 @@
                           "typeString": "literal_string \"Hospital not registered\""
                         }
                       ],
-                      "id": 1217,
+                      "id": 1171,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -2339,7 +2339,7 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 1222,
+                    "id": 1176,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2355,31 +2355,31 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1223,
+                  "id": 1177,
                   "nodeType": "ExpressionStatement",
                   "src": "1921:64:1"
                 },
                 {
                   "expression": {
                     "baseExpression": {
-                      "id": 1224,
+                      "id": 1178,
                       "name": "hospitals",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1098,
+                      "referencedDeclaration": 1052,
                       "src": "2003:9:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1090_storage_$",
+                        "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1044_storage_$",
                         "typeString": "mapping(address => struct HospitalRegistry.Hospital storage ref)"
                       }
                     },
-                    "id": 1226,
+                    "id": 1180,
                     "indexExpression": {
-                      "id": 1225,
+                      "id": 1179,
                       "name": "_walletAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1211,
+                      "referencedDeclaration": 1165,
                       "src": "2013:14:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -2393,19 +2393,19 @@
                     "nodeType": "IndexAccess",
                     "src": "2003:25:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Hospital_$1090_storage",
+                      "typeIdentifier": "t_struct$_Hospital_$1044_storage",
                       "typeString": "struct HospitalRegistry.Hospital storage ref"
                     }
                   },
-                  "functionReturnParameters": 1216,
-                  "id": 1227,
+                  "functionReturnParameters": 1170,
+                  "id": 1181,
                   "nodeType": "Return",
                   "src": "1996:32:1"
                 }
               ]
             },
             "functionSelector": "c49b09b5",
-            "id": 1229,
+            "id": 1183,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -2413,17 +2413,17 @@
             "nameLocation": "1836:11:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1212,
+              "id": 1166,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1211,
+                  "id": 1165,
                   "mutability": "mutable",
                   "name": "_walletAddress",
                   "nameLocation": "1856:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1229,
+                  "scope": 1183,
                   "src": "1848:22:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2432,7 +2432,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1210,
+                    "id": 1164,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1848:7:1",
@@ -2448,41 +2448,41 @@
               "src": "1847:24:1"
             },
             "returnParameters": {
-              "id": 1216,
+              "id": 1170,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1215,
+                  "id": 1169,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1229,
+                  "scope": 1183,
                   "src": "1893:15:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_Hospital_$1090_memory_ptr",
+                    "typeIdentifier": "t_struct$_Hospital_$1044_memory_ptr",
                     "typeString": "struct HospitalRegistry.Hospital"
                   },
                   "typeName": {
-                    "id": 1214,
+                    "id": 1168,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 1213,
+                      "id": 1167,
                       "name": "Hospital",
                       "nameLocations": [
                         "1893:8:1"
                       ],
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 1090,
+                      "referencedDeclaration": 1044,
                       "src": "1893:8:1"
                     },
-                    "referencedDeclaration": 1090,
+                    "referencedDeclaration": 1044,
                     "src": "1893:8:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_Hospital_$1090_storage_ptr",
+                      "typeIdentifier": "t_struct$_Hospital_$1044_storage_ptr",
                       "typeString": "struct HospitalRegistry.Hospital"
                     }
                   },
@@ -2491,7 +2491,7 @@
               ],
               "src": "1892:17:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "1827:209:1",
             "stateMutability": "view",
             "virtual": false,
@@ -2499,31 +2499,31 @@
           },
           {
             "body": {
-              "id": 1240,
+              "id": 1194,
               "nodeType": "Block",
               "src": "2118:54:1",
               "statements": [
                 {
                   "expression": {
                     "baseExpression": {
-                      "id": 1236,
+                      "id": 1190,
                       "name": "isRegistered",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1102,
+                      "referencedDeclaration": 1056,
                       "src": "2136:12:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                         "typeString": "mapping(address => bool)"
                       }
                     },
-                    "id": 1238,
+                    "id": 1192,
                     "indexExpression": {
-                      "id": 1237,
+                      "id": 1191,
                       "name": "_walletAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1231,
+                      "referencedDeclaration": 1185,
                       "src": "2149:14:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -2541,15 +2541,15 @@
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 1235,
-                  "id": 1239,
+                  "functionReturnParameters": 1189,
+                  "id": 1193,
                   "nodeType": "Return",
                   "src": "2129:35:1"
                 }
               ]
             },
             "functionSelector": "07316e70",
-            "id": 1241,
+            "id": 1195,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -2557,17 +2557,17 @@
             "nameLocation": "2053:13:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1232,
+              "id": 1186,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1231,
+                  "id": 1185,
                   "mutability": "mutable",
                   "name": "_walletAddress",
                   "nameLocation": "2075:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1241,
+                  "scope": 1195,
                   "src": "2067:22:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2576,7 +2576,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1230,
+                    "id": 1184,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2067:7:1",
@@ -2592,17 +2592,17 @@
               "src": "2066:24:1"
             },
             "returnParameters": {
-              "id": 1235,
+              "id": 1189,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1234,
+                  "id": 1188,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1241,
+                  "scope": 1195,
                   "src": "2112:4:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2611,7 +2611,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 1233,
+                    "id": 1187,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "2112:4:1",
@@ -2625,7 +2625,7 @@
               ],
               "src": "2111:6:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "2044:128:1",
             "stateMutability": "view",
             "virtual": false,
@@ -2633,31 +2633,31 @@
           },
           {
             "body": {
-              "id": 1252,
+              "id": 1206,
               "nodeType": "Block",
               "src": "2374:60:1",
               "statements": [
                 {
                   "expression": {
                     "baseExpression": {
-                      "id": 1248,
+                      "id": 1202,
                       "name": "isApprovedHospital",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1106,
+                      "referencedDeclaration": 1060,
                       "src": "2392:18:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                         "typeString": "mapping(address => bool)"
                       }
                     },
-                    "id": 1250,
+                    "id": 1204,
                     "indexExpression": {
-                      "id": 1249,
+                      "id": 1203,
                       "name": "_walletAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1243,
+                      "referencedDeclaration": 1197,
                       "src": "2411:14:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
@@ -2675,15 +2675,15 @@
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 1247,
-                  "id": 1251,
+                  "functionReturnParameters": 1201,
+                  "id": 1205,
                   "nodeType": "Return",
                   "src": "2385:41:1"
                 }
               ]
             },
             "functionSelector": "0afa0823",
-            "id": 1253,
+            "id": 1207,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -2691,17 +2691,17 @@
             "nameLocation": "2304:18:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1244,
+              "id": 1198,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1243,
+                  "id": 1197,
                   "mutability": "mutable",
                   "name": "_walletAddress",
                   "nameLocation": "2331:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1253,
+                  "scope": 1207,
                   "src": "2323:22:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2710,7 +2710,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1242,
+                    "id": 1196,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2323:7:1",
@@ -2726,17 +2726,17 @@
               "src": "2322:24:1"
             },
             "returnParameters": {
-              "id": 1247,
+              "id": 1201,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1246,
+                  "id": 1200,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1253,
+                  "scope": 1207,
                   "src": "2368:4:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2745,7 +2745,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 1245,
+                    "id": 1199,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "2368:4:1",
@@ -2759,7 +2759,7 @@
               ],
               "src": "2367:6:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "2295:139:1",
             "stateMutability": "view",
             "virtual": false,
@@ -2767,7 +2767,7 @@
           },
           {
             "body": {
-              "id": 1272,
+              "id": 1226,
               "nodeType": "Block",
               "src": "2527:131:1",
               "statements": [
@@ -2776,24 +2776,24 @@
                     "arguments": [
                       {
                         "baseExpression": {
-                          "id": 1261,
+                          "id": 1215,
                           "name": "isRegistered",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1102,
+                          "referencedDeclaration": 1056,
                           "src": "2546:12:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
                             "typeString": "mapping(address => bool)"
                           }
                         },
-                        "id": 1263,
+                        "id": 1217,
                         "indexExpression": {
-                          "id": 1262,
+                          "id": 1216,
                           "name": "_walletAddress",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 1255,
+                          "referencedDeclaration": 1209,
                           "src": "2559:14:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
@@ -2813,7 +2813,7 @@
                       },
                       {
                         "hexValue": "486f73706974616c206e6f742072656769737465726564",
-                        "id": 1264,
+                        "id": 1218,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -2839,7 +2839,7 @@
                           "typeString": "literal_string \"Hospital not registered\""
                         }
                       ],
-                      "id": 1260,
+                      "id": 1214,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
@@ -2853,7 +2853,7 @@
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 1265,
+                    "id": 1219,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -2869,7 +2869,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 1266,
+                  "id": 1220,
                   "nodeType": "ExpressionStatement",
                   "src": "2538:64:1"
                 },
@@ -2877,24 +2877,24 @@
                   "expression": {
                     "expression": {
                       "baseExpression": {
-                        "id": 1267,
+                        "id": 1221,
                         "name": "hospitals",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1098,
+                        "referencedDeclaration": 1052,
                         "src": "2620:9:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1090_storage_$",
+                          "typeIdentifier": "t_mapping$_t_address_$_t_struct$_Hospital_$1044_storage_$",
                           "typeString": "mapping(address => struct HospitalRegistry.Hospital storage ref)"
                         }
                       },
-                      "id": 1269,
+                      "id": 1223,
                       "indexExpression": {
-                        "id": 1268,
+                        "id": 1222,
                         "name": "_walletAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1255,
+                        "referencedDeclaration": 1209,
                         "src": "2630:14:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -2908,11 +2908,11 @@
                       "nodeType": "IndexAccess",
                       "src": "2620:25:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_Hospital_$1090_storage",
+                        "typeIdentifier": "t_struct$_Hospital_$1044_storage",
                         "typeString": "struct HospitalRegistry.Hospital storage ref"
                       }
                     },
-                    "id": 1270,
+                    "id": 1224,
                     "isConstant": false,
                     "isLValue": true,
                     "isPure": false,
@@ -2920,22 +2920,22 @@
                     "memberLocation": "2646:4:1",
                     "memberName": "name",
                     "nodeType": "MemberAccess",
-                    "referencedDeclaration": 1073,
+                    "referencedDeclaration": 1027,
                     "src": "2620:30:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage",
                       "typeString": "string storage ref"
                     }
                   },
-                  "functionReturnParameters": 1259,
-                  "id": 1271,
+                  "functionReturnParameters": 1213,
+                  "id": 1225,
                   "nodeType": "Return",
                   "src": "2613:37:1"
                 }
               ]
             },
             "functionSelector": "3285b82d",
-            "id": 1273,
+            "id": 1227,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
@@ -2943,17 +2943,17 @@
             "nameLocation": "2451:15:1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1256,
+              "id": 1210,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1255,
+                  "id": 1209,
                   "mutability": "mutable",
                   "name": "_walletAddress",
                   "nameLocation": "2475:14:1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1273,
+                  "scope": 1227,
                   "src": "2467:22:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2962,7 +2962,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1254,
+                    "id": 1208,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "2467:7:1",
@@ -2978,17 +2978,17 @@
               "src": "2466:24:1"
             },
             "returnParameters": {
-              "id": 1259,
+              "id": 1213,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1258,
+                  "id": 1212,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1273,
+                  "scope": 1227,
                   "src": "2512:13:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2997,7 +2997,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 1257,
+                    "id": 1211,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "2512:6:1",
@@ -3011,14 +3011,14 @@
               ],
               "src": "2511:15:1"
             },
-            "scope": 1274,
+            "scope": 1228,
             "src": "2442:216:1",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
-        "scope": 1275,
+        "scope": 1229,
         "src": "60:2601:1",
         "usedErrors": []
       }
@@ -3033,12 +3033,12 @@
     "1337": {
       "events": {},
       "links": {},
-      "address": "0xa844AC1fDf0de42429050B2a34F23afBD5D003d0",
-      "transactionHash": "0x744efa5e2e9ab4bf873eb2070cab56de6f65c1b30a1d86cb438410f03013763e"
+      "address": "0x15C66Cb55D25d1559083b140117B8b064c8ea3d8",
+      "transactionHash": "0x77a9f8b165d4902c0782f18cd8a454a75d7e8a12b454a7c4fbdd8442e5bd03d2"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2026-03-28T22:24:34.627Z",
+  "updatedAt": "2026-04-03T11:29:57.052Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

@@ -10,11 +10,11 @@ import UserRegistry     from "../../contracts/UserRegistry.json";
 
 
 
-const CLAIM_CONTRACT_ADDRESS  = "0x923E94A65dE82C198e7C3bBA3A2aBf3E122f1f37";
+const CLAIM_CONTRACT_ADDRESS  = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
 
-const POLICY_CONTRACT_ADDRESS = "0x9D176192efAc1BD6fe9d8Fac271E39E358A382ca";
+const POLICY_CONTRACT_ADDRESS = "0x87B4806722C10629C047F3c92eA278CB6c0df6b9";
 
-const USER_REGISTRY_ADDRESS   = "0xf33Cb81168dF3bB94c1549bE9013b66eb058dDe9";
+const USER_REGISTRY_ADDRESS   = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
 
 const PINATA_API_KEY          = "58ef12624062ff40de68";
 
@@ -50,9 +50,73 @@ function SubmitClaim({ account, web3 }) {
 
   });
 
-
+  const [fraudFlags, setFraudFlags] = useState([]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const runFraudDetection = async (address, claimAmt, treatmentDate) => {
+    if (!address || !claimAmt || !web3) return;
+    const flags = [];
+    try {
+      const cc = new web3.eth.Contract(ClaimContract.abi, CLAIM_CONTRACT_ADDRESS);
+      const allIds = await cc.methods.getAllClaims().call();
+      const patientClaims = [];
+      const hospitalClaims = [];
+      for (const id of allIds) {
+        try {
+          const c = await cc.methods.getClaim(id).call();
+          if (c.patientAddress?.toLowerCase() === address.toLowerCase()) patientClaims.push(c);
+          if (c.hospitalAddress?.toLowerCase() === account.toLowerCase()) hospitalClaims.push(c);
+        } catch (_) {}
+      }
+      const amt = parseFloat(claimAmt);
+      const txDate = treatmentDate ? new Date(treatmentDate) : null;
+
+      // Flag 1: Duplicate claim within 30 days of treatment date
+      if (txDate) {
+        const recent = patientClaims.filter(c => {
+          const ts = Number(c.submittedOn || 0) * 1000;
+          return ts && Math.abs(txDate - new Date(ts)) / (1000 * 60 * 60 * 24) <= 30;
+        });
+        if (recent.length > 0)
+          flags.push({ level: "high", text: `Patient has ${recent.length} claim(s) within 30 days of this treatment date.` });
+      }
+
+      // Flag 2: Repeat claims in last 60 days
+      const last60 = patientClaims.filter(c => {
+        const ts = Number(c.submittedOn || 0) * 1000;
+        return ts && (Date.now() - ts) / (1000 * 60 * 60 * 24) <= 60;
+      });
+      if (last60.length > 0)
+        flags.push({ level: "medium", text: `Patient has ${last60.length} prior claim(s) in the last 60 days — possible repeat billing.` });
+
+      // Flag 3: High hospital claim frequency in last 7 days
+      const recentHosp = hospitalClaims.filter(c => {
+        const ts = Number(c.submittedOn || 0) * 1000;
+        return ts && (Date.now() - ts) / (1000 * 60 * 60 * 24) <= 7;
+      });
+      if (recentHosp.length >= 5)
+        flags.push({ level: "medium", text: `This hospital has submitted ${recentHosp.length} claims in the last 7 days — high frequency alert.` });
+
+      // Flag 4: Claim amount significantly above patient's historical average
+      if (patientClaims.length >= 2) {
+        const avg = patientClaims.reduce((s, c) => s + parseFloat(web3.utils.fromWei(c.claimAmount?.toString() || "0", "ether")), 0) / patientClaims.length;
+        if (amt > avg * 2.5)
+          flags.push({ level: "high", text: `Claim amount is ${(amt / avg).toFixed(1)}× the patient's historical average — unusual spike.` });
+      }
+    } catch (e) {
+      console.warn("Fraud detection error:", e.message);
+    }
+    setFraudFlags(flags);
+  };
+
+  useEffect(() => {
+    if (patientAddress && formData.claimAmount && policyInfo) {
+      runFraudDetection(patientAddress, formData.claimAmount, formData.treatmentDate);
+    } else {
+      setFraudFlags([]);
+    }
+  }, [patientAddress, formData.claimAmount, formData.treatmentDate, policyInfo]);
 
 
 
@@ -82,7 +146,9 @@ function SubmitClaim({ account, web3 }) {
 
       if (!hasSub) { setError("Patient has no active policy!"); return; }
 
-      setPolicyInfo(await pc.methods.getSubscription(patientAddress).call());
+      const sub = await pc.methods.getSubscription(patientAddress).call();
+      const policy = await pc.methods.getPolicy(sub.policyId).call();
+      setPolicyInfo({ ...sub, coverageLimit: policy.coverageLimit, copayPercentage: policy.copayPercentage, deductible: policy.deductible });
 
     } catch (err) { setError("Error: " + err.message); }
 
@@ -165,7 +231,6 @@ function SubmitClaim({ account, web3 }) {
       await cc.methods.submitClaim(
 
         patientAddress, formData.treatmentName, formData.treatmentDate,
-
         formData.description, web3.utils.toWei(formData.claimAmount, "ether"), ipfsCID
 
       ).send({ from: account });
@@ -284,7 +349,7 @@ function SubmitClaim({ account, web3 }) {
 
                     <div style={S.infoGrid}>
 
-                      {[["Policy Name",policyInfo.policyName],["Coverage",formatETH(policyInfo.coverageLimit)+" ETH"],["Co-pay",policyInfo.copayPercent.toString()+"%"],["Deductible",formatETH(policyInfo.deductible)+" ETH"]].map(([l,v],i)=>(
+                      {[["Policy Name",policyInfo.policyName],["Coverage",formatETH(policyInfo.coverageLimit)+" ETH"],["Co-pay",policyInfo.copayPercentage.toString()+"%"],["Deductible",formatETH(policyInfo.deductible)+" ETH"]].map(([l,v],i)=>(
 
                         <InfoItem key={i} label={l} value={v}/>
 
@@ -406,6 +471,23 @@ function SubmitClaim({ account, web3 }) {
 
                   </div>
 
+                )}
+
+                {/* FRAUD DETECTION PANEL */}
+                {fraudFlags.length > 0 && (
+                  <div style={{background:"#fff5f5",border:"2px solid #fc8181",borderRadius:"12px",padding:"16px 20px",marginBottom:"16px"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"10px"}}>
+                      <span style={{fontSize:"18px"}}>⚠️</span>
+                      <span style={{fontWeight:"800",fontSize:"13px",color:"#c62828"}}>Fraud Risk Indicators Detected ({fraudFlags.length})</span>
+                    </div>
+                    {fraudFlags.map((f, i) => (
+                      <div key={i} style={{display:"flex",alignItems:"flex-start",gap:"8px",padding:"7px 10px",marginBottom:"6px",borderRadius:"6px",background:f.level==="high"?"#fee2e2":f.level==="medium"?"#fef3c7":"#fefcbf",borderLeft:`3px solid ${f.level==="high"?"#ef4444":"#d97706"}`}}>
+                        <span style={{fontSize:"10px",fontWeight:"800",marginTop:"2px",color:f.level==="high"?"#dc2626":"#b45309",textTransform:"uppercase",flexShrink:0}}>{f.level}</span>
+                        <span style={{fontSize:"12px",color:"#1e293b",lineHeight:1.5}}>{f.text}</span>
+                      </div>
+                    ))}
+                    <p style={{fontSize:"11px",color:"#64748b",margin:"8px 0 0"}}>These flags are advisory. The insurer will review them during claim assessment.</p>
+                  </div>
                 )}
 
                 <button style={{...S.submitBtn,background:submitting||uploading?"#90a4ae":"#1565c0",cursor:submitting||uploading?"not-allowed":"pointer"}} type="submit" disabled={submitting||uploading}>

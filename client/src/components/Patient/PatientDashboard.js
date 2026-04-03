@@ -10,11 +10,11 @@ import ClaimContract  from "../../contracts/ClaimContract.json";
 
 
 
-const USER_REGISTRY_ADDRESS   = "0xf33Cb81168dF3bB94c1549bE9013b66eb058dDe9";
+const USER_REGISTRY_ADDRESS   = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
 
-const POLICY_CONTRACT_ADDRESS = "0x9D176192efAc1BD6fe9d8Fac271E39E358A382ca";
+const POLICY_CONTRACT_ADDRESS = "0x87B4806722C10629C047F3c92eA278CB6c0df6b9";
 
-const CLAIM_CONTRACT_ADDRESS  = "0x923E94A65dE82C198e7C3bBA3A2aBf3E122f1f37";
+const CLAIM_CONTRACT_ADDRESS  = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
 
 
 
@@ -67,15 +67,12 @@ function PatientDashboard({ account, web3 }) {
       const hasSub = await policyContract.methods.checkActivePolicy(account).call();
 
       if (hasSub) {
-
         const sub = await policyContract.methods.getSubscription(account).call();
-
-        setSubscription(sub);
-
+        // Fetch policy to get deductible + copayPercentage (not in Subscription struct)
+        const policy = await policyContract.methods.getPolicy(sub.policyId).call();
+        setSubscription({ ...sub, deductible: policy.deductible, copayPercentage: policy.copayPercentage });
         const history = await policyContract.methods.getPaymentHistory(account).call();
-
         setPaymentHistory(history);
-
       }
 
       const claimContract = new web3.eth.Contract(ClaimContract.abi, CLAIM_CONTRACT_ADDRESS);
@@ -648,11 +645,11 @@ function PatientDashboard({ account, web3 }) {
 
                   ["End Date",        formatDate(subscription.endDate)],
 
-                  ["Co-pay",         subscription.copayPercent.toString() + "% of claim"],
+                  ["Co-pay",         subscription.copayPercentage.toString() + "% of claim"],
 
                   ["Deductible",      formatETH(subscription.deductible) + " ETH per claim"],
 
-                  ["Waiting Period",  subscription.waitingPeriod.toString() + " days"],
+                  ["Waiting Period",  "N/A"],
 
                 ].map(([label, value], i) => (
 

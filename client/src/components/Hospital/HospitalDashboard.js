@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import HospitalRegistry from "../../contracts/HospitalRegistry.json";
 import ClaimContract    from "../../contracts/ClaimContract.json";
 
-const CONTRACT_ADDRESS       = "0xa844AC1fDf0de42429050B2a34F23afBD5D003d0";
-const CLAIM_CONTRACT_ADDRESS = "0x923E94A65dE82C198e7C3bBA3A2aBf3E122f1f37";
+const CONTRACT_ADDRESS       = "0x15C66Cb55D25d1559083b140117B8b064c8ea3d8";
+const CLAIM_CONTRACT_ADDRESS = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
 
 function HospitalDashboard({ account, web3 }) {
   const navigate = useNavigate();
@@ -166,6 +166,16 @@ function HospitalDashboard({ account, web3 }) {
             </div>
             <button style={{ ...S.actionBtn, background: "#0d47a1" }}>View Claims →</button>
           </div>
+          <div style={S.actionCard} onClick={() => navigate("/hospital/check-eligibility")}>
+            <div style={S.actionIconWrap}>
+              <div style={{ ...S.actionIcon, background: "#e8f5e9", color: "#2e7d32" }}>✔</div>
+            </div>
+            <div style={S.actionBody}>
+              <div style={S.actionTitle}>Check Patient Eligibility</div>
+              <div style={S.actionDesc}>Verify a patient's insurance coverage before treatment</div>
+            </div>
+            <button style={{ ...S.actionBtn, background: "#2e7d32" }}>Check Now →</button>
+          </div>
         </div>
 
         {/* DETAILS CARDS */}
@@ -295,7 +305,7 @@ const S = {
 
   // ACTIONS
   sectionLabel: { fontSize: "12px", fontWeight: "800", color: "#7a8aa8", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "14px" },
-  actionsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "36px" },
+  actionsGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", marginBottom: "36px" },
   actionCard: { background: "#fff", border: "1px solid #dde3ef", borderRadius: "12px", padding: "24px", display: "flex", alignItems: "center", gap: "18px", cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s" },
   actionIconWrap: { flexShrink: 0 },
   actionIcon: { width: "44px", height: "44px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", fontWeight: "900" },

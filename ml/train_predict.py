@@ -6,8 +6,8 @@ Adapts production rolling forecast approach for MedInsure dataset.
 Workflow:
 - Baseline: Train on 2021-2025, predict all 12 months of 2026
 - Rolling:  Retrain each month adding actual 2026 data progressively
-            Jan â† train 2021-2025, predict Feb-Dec 2026
-            Feb â† train 2021-2025+Jan, predict Mar-Dec 2026
+            Jan ← train 2021-2025, predict Feb-Dec 2026
+            Feb ← train 2021-2025+Jan, predict Mar-Dec 2026
             ...and so on
 """
 
@@ -279,7 +279,7 @@ def monthly_retraining_workflow(df_full, current_year, current_month):
 # BASELINE — Train on 2021-2025, predict all 2026
 # ============================================================================
 print("\n" + "=" * 100)
-print("STEP 1: BASELINE FORECAST (Train 2021-2025 â† Predict all 2026)")
+print("STEP 1: BASELINE FORECAST (Train 2021-2025 ← Predict all 2026)")
 print("=" * 100)
 
 baseline_result = monthly_retraining_workflow(df_full, 2026, 1)
@@ -339,7 +339,7 @@ print(f"   Rolling Avg R²:       {avg_r2*100:.2f}%")
 print(f"   Baseline MAPE:        {baseline_result['monthly_mape']:.2f}%")
 print(f"   Rolling Avg MAPE:     {avg_mape:.2f}%")
 print(f"   Total 2026 Reserve:   {baseline_result['total_reserve']:.4f} USD")
-print(f"   Training growth:      {rolling_results[0]['train_size']:,} â† {rolling_results[-1]['train_size']:,}")
+print(f"   Training growth:      {rolling_results[0]['train_size']:,} -> {rolling_results[-1]['train_size']:,}")
 
 # ============================================================================
 # SAVE FORECAST

@@ -8,9 +8,9 @@ import UserRegistry from "../../contracts/UserRegistry.json";
 
 
 
-const POLICY_CONTRACT_ADDRESS = "0x9D176192efAc1BD6fe9d8Fac271E39E358A382ca";
+const POLICY_CONTRACT_ADDRESS = "0x87B4806722C10629C047F3c92eA278CB6c0df6b9";
 
-const USER_REGISTRY_ADDRESS   = "0xf33Cb81168dF3bB94c1549bE9013b66eb058dDe9";
+const USER_REGISTRY_ADDRESS   = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
 
 
 
@@ -374,7 +374,7 @@ function SubscribePolicy({ account, web3 }) {
 
                   <div style={S.statItem}>
 
-                    <div style={{ ...S.statVal, color: accent }}>{policy.copayPercent.toString()}%</div>
+                    <div style={{ ...S.statVal, color: accent }}>{policy.copayPercentage.toString()}%</div>
 
                     <div style={S.statLbl}>Co-pay</div>
 
@@ -400,7 +400,7 @@ function SubscribePolicy({ account, web3 }) {
 
                   <DetailRow label="Validity"       value={policy.validityPeriod.toString() + " Year(s)"} />
 
-                  <DetailRow label="Waiting Period" value={policy.waitingPeriod.toString() + " days"} />
+                  <DetailRow label="Waiting Period" value={"N/A"} />
 
                   <DetailRow label="Covered"        value={policy.covered} green />
 

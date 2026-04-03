@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PolicyContract from "../../contracts/PolicyContract.json";
 
-const CONTRACT_ADDRESS = "0x9D176192efAc1BD6fe9d8Fac271E39E358A382ca";
+const CONTRACT_ADDRESS = "0x87B4806722C10629C047F3c92eA278CB6c0df6b9";
 
 function CreatePolicy({ account, web3 }) {
   const navigate = useNavigate();
@@ -39,16 +39,15 @@ function CreatePolicy({ account, web3 }) {
     try {
       const contract = new web3.eth.Contract(PolicyContract.abi, CONTRACT_ADDRESS);
       await contract.methods.createPolicy({
-        policyName:     formData.policyName,
-        coverageLimit:  web3.utils.toWei(formData.coverageLimit, "ether"),
-        premiumAmount:  web3.utils.toWei(formData.premiumAmount, "ether"),
-        validityPeriod: parseInt(formData.validityPeriod),
-        copayPercent:   parseInt(formData.copayPercent),
-        deductible:     web3.utils.toWei(formData.deductible, "ether"),
-        waitingPeriod:  parseInt(formData.waitingPeriod),
-        ipfsCID:        formData.ipfsCID,
-        covered:        formData.covered,
-        excluded:       formData.excluded,
+        policyName:      formData.policyName,
+        coverageLimit:   web3.utils.toWei(formData.coverageLimit, "ether"),
+        premiumAmount:   web3.utils.toWei(formData.premiumAmount, "ether"),
+        validityPeriod:  parseInt(formData.validityPeriod),
+        ipfsCID:         formData.ipfsCID,
+        covered:         formData.covered,
+        excluded:        formData.excluded,
+        deductible:      web3.utils.toWei(formData.deductible, "ether"),
+        copayPercentage: parseInt(formData.copayPercent),
       }).send({ from: account });
       setSuccess("Policy created successfully.");
       setFormData({ policyName:"", coverageLimit:"", premiumAmount:"", validityPeriod:"", copayPercent:"", deductible:"", waitingPeriod:"", ipfsCID:"", covered:"", excluded:"" });
@@ -350,7 +349,7 @@ function CreatePolicy({ account, web3 }) {
                 <table className="cp-table">
                   <thead>
                     <tr>
-                      {["ID","Policy Name","Coverage","Premium","Validity","Co-pay %","Deductible","Waiting","Covered","Excluded","Status"].map((h) => (
+                      {["ID","Policy Name","Coverage","Premium","Validity","Co-pay %","Deductible","Covered","Excluded","Status"].map((h) => (
                         <th key={h} className="cp-th">{h}</th>
                       ))}
                     </tr>
@@ -363,9 +362,8 @@ function CreatePolicy({ account, web3 }) {
                         <td className="cp-td accent">{web3.utils.fromWei(p.coverageLimit.toString(), "ether")} ETH</td>
                         <td className="cp-td">{web3.utils.fromWei(p.premiumAmount.toString(), "ether")} ETH</td>
                         <td className="cp-td">{p.validityPeriod.toString()} Yr</td>
-                        <td className="cp-td accent">{p.copayPercent.toString()}%</td>
+                        <td className="cp-td accent">{p.copayPercentage.toString()}%</td>
                         <td className="cp-td">{web3.utils.fromWei(p.deductible.toString(), "ether")} ETH</td>
-                        <td className="cp-td">{p.waitingPeriod.toString()} days</td>
                         <td className="cp-td wrap">{p.covered}</td>
                         <td className="cp-td wrap">{p.excluded}</td>
                         <td className="cp-td">
