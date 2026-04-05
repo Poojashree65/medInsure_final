@@ -199,6 +199,14 @@ contract PolicyContract {
         return subscriptions[patient];
     }
 
+    function getPolicyIdForPatient(address patient) public view returns (uint256) {
+        return subscriptions[patient].policyId;
+    }
+
+    function getPolicyNameForPatient(address patient) public view returns (string memory) {
+        return subscriptions[patient].policyName;
+    }
+
     function getPaymentHistory(address patient) public view returns (PaymentRecord[] memory) {
         return paymentHistory[patient];
     }

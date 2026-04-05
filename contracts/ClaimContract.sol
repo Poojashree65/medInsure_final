@@ -5,20 +5,8 @@ interface IPolicyContract {
     function hasSubscription(address patient) external view returns (bool);
     function calculateClaimPayout(address patient, uint256 claimAmount)
         external view returns (uint256 patientPays, uint256 insurerPays);
-    function getSubscription(address patient) external view returns (
-        address patientAddress,
-        uint256 policyId,
-        string memory policyName,
-        uint256 premiumAmount,
-        uint256 totalPaid,
-        uint256 startDate,
-        uint256 endDate,
-        uint256 nextDueDate,
-        uint256 monthsPaid,
-        string memory subscriptionStatus,
-        string memory paymentStatus,
-        uint256 timestamp
-    );
+    function getPolicyIdForPatient(address patient) external view returns (uint256);
+    function getPolicyNameForPatient(address patient) external view returns (string memory);
 }
 
 interface IHospitalRegistry {
@@ -123,6 +111,10 @@ contract ClaimContract {
         string memory patientName  = userRegistry.getPatientName(patientAddress);
         string memory hospitalName = hospitalRegistry.getHospitalName(msg.sender);
 
+        // Pull actual policyId and policyName from subscription
+        uint256 policyId       = policyContract.getPolicyIdForPatient(patientAddress);
+        string memory policyName = policyContract.getPolicyNameForPatient(patientAddress);
+
         claimCount++;
         claims[claimCount] = Claim({
             claimId:         claimCount,
@@ -130,8 +122,8 @@ contract ClaimContract {
             hospitalAddress: msg.sender,
             patientName:     patientName,
             hospitalName:    hospitalName,
-            policyId:        1,
-            policyName:      "Policy",
+            policyId:        policyId,
+            policyName:      policyName,
             treatmentName:   treatmentName,
             treatmentDate:   treatmentDate,
             description:     description,

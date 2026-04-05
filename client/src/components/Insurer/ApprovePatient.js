@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserRegistry from "../../contracts/UserRegistry.json";
 
-const CONTRACT_ADDRESS = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
+const CONTRACT_ADDRESS = "0xfAb58c1c5B6486aBb2324270948581D4E4C8322D";
 
 function ApprovePatient({ account, web3 }) {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HospitalRegistry from "../../contracts/HospitalRegistry.json";
 
-const CONTRACT_ADDRESS = "0x15C66Cb55D25d1559083b140117B8b064c8ea3d8";
+const CONTRACT_ADDRESS = "0xD379aacA4167c27038ad8579782c7D8bc60d662D";
 
 function RegisterHospital({ account, web3 }) {
   const navigate = useNavigate();

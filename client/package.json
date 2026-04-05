@@ -12,6 +12,7 @@
     "axios": "^1.13.5",
     "face-api.js": "^0.22.2",
     "firebase": "^12.9.0",
+    "pdfjs-dist": "^4.8.69",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.0",

@@ -1,660 +1,652 @@
 import React, { useState, useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
+import ClaimContract  from "../../contracts/ClaimContract.json";
+import PolicyContract from "../../contracts/PolicyContract.json";
+import UserRegistry   from "../../contracts/UserRegistry.json";
 
-import ClaimContract    from "../../contracts/ClaimContract.json";
-
-import PolicyContract   from "../../contracts/PolicyContract.json";
-
-import UserRegistry     from "../../contracts/UserRegistry.json";
-
-
-
-const CLAIM_CONTRACT_ADDRESS  = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
-
-const POLICY_CONTRACT_ADDRESS = "0x87B4806722C10629C047F3c92eA278CB6c0df6b9";
-
-const USER_REGISTRY_ADDRESS   = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
-
+const CLAIM_CONTRACT_ADDRESS  = "0xE84B25aAeE6Bd9efeD250f2327F1Ec47ed44d40e";
+const POLICY_CONTRACT_ADDRESS = "0x888C72Bd841cc9B61d1d07A07b244dad70ACA057";
+const USER_REGISTRY_ADDRESS   = "0xfAb58c1c5B6486aBb2324270948581D4E4C8322D";
 const PINATA_API_KEY          = "58ef12624062ff40de68";
-
 const PINATA_SECRET_KEY       = "e0f01efdc5f42b628feab15e89cbfa32cdc32b6320e0046b7274629ea8b06922";
 
-
-
 function SubmitClaim({ account, web3 }) {
-
   const navigate = useNavigate();
 
+  // ── Patient search ───────────────────────────────────────────────
   const [patientAddress, setPatientAddress] = useState("");
+  const [patientInfo,    setPatientInfo]    = useState(null);
+  const [policyInfo,     setPolicyInfo]     = useState(null);
+  const [searching,      setSearching]      = useState(false);
+  const [searchError,    setSearchError]    = useState("");
 
-  const [patientInfo, setPatientInfo]       = useState(null);
-
-  const [policyInfo, setPolicyInfo]         = useState(null);
-
-  const [payoutPreview, setPayoutPreview]   = useState(null);
-
-  const [files, setFiles]                   = useState([]);
-
-  const [uploading, setUploading]           = useState(false);
-
-  const [submitting, setSubmitting]         = useState(false);
-
-  const [error, setError]                   = useState("");
-
-  const [success, setSuccess]               = useState("");
-
+  // ── Form ─────────────────────────────────────────────────────────
   const [formData, setFormData] = useState({
-
     treatmentName: "", treatmentDate: "", claimAmount: "", description: "",
-
+    primaryDiagnosis: "", icdCode: "", procedurePerformed: "",
+    admissionDate: "", dischargeDate: "", lengthOfStay: "",
+    wardRoom: "", attendingDoctor: "", doctorRegNo: "",
+    surgeryCharges: "", otCharges: "", anaesthesiaCharges: "",
+    wardCharges: "", medicinesCharges: "", labCharges: "",
   });
+  const [files, setFiles] = useState([]);
 
-  const [fraudFlags, setFraudFlags] = useState([]);
+  // ── Status ───────────────────────────────────────────────────────
+  const [uploading,       setUploading]       = useState(false);
+  const [submitting,      setSubmitting]      = useState(false);
+  const [uploadProgress,  setUploadProgress]  = useState("");
+  const [error,           setError]           = useState("");
+  const [success,         setSuccess]         = useState("");
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  // ── Derived panels ───────────────────────────────────────────────
+  const [payoutBreakdown,    setPayoutBreakdown]    = useState(null);
+  const [fraudFlags,         setFraudFlags]         = useState([]);
+  const [verificationStatus, setVerificationStatus] = useState(null);
 
-  const runFraudDetection = async (address, claimAmt, treatmentDate) => {
-    if (!address || !claimAmt || !web3) return;
+  const formatETH = (wei) => parseFloat(web3.utils.fromWei(wei.toString(), "ether")).toFixed(4);
+
+  // ── PATIENT LOOKUP ───────────────────────────────────────────────
+  const lookupPatient = async () => {
+    setSearchError(""); setPatientInfo(null); setPolicyInfo(null);
+    setPayoutBreakdown(null); setFraudFlags([]); setVerificationStatus(null);
+    if (!web3.utils.isAddress(patientAddress)) { setSearchError("Invalid wallet address!"); return; }
+    setSearching(true);
+    try {
+      const uc = new web3.eth.Contract(UserRegistry.abi, USER_REGISTRY_ADDRESS);
+      const pc = new web3.eth.Contract(PolicyContract.abi, POLICY_CONTRACT_ADDRESS);
+      const isReg = await uc.methods.checkPatientRegistered(patientAddress).call();
+      if (!isReg) { setSearchError("Patient not registered!"); setSearching(false); return; }
+      const patient = await uc.methods.getPatient(patientAddress).call();
+      if (patient.status !== "Approved") { setSearchError("Patient KYC not approved!"); setSearching(false); return; }
+      setPatientInfo(patient);
+      const hasSub = await pc.methods.checkActivePolicy(patientAddress).call();
+      if (!hasSub) { setSearchError("Patient has no active policy!"); setSearching(false); return; }
+      const sub    = await pc.methods.getSubscription(patientAddress).call();
+      const policy = await pc.methods.getPolicy(sub.policyId).call();
+      setPolicyInfo({ ...sub, coverageLimit: policy.coverageLimit, copayPercentage: policy.copayPercentage, deductible: policy.deductible, policyName: policy.policyName });
+    } catch (err) { setSearchError("Error: " + err.message); }
+    setSearching(false);
+  };
+
+  // ── PAYOUT BREAKDOWN (client-side, live) ─────────────────────────
+  useEffect(() => {
+    if (!formData.claimAmount || !policyInfo) { setPayoutBreakdown(null); return; }
+    const claimAmt     = parseFloat(formData.claimAmount);
+    const deductible   = parseFloat(formatETH(policyInfo.deductible));
+    const copayPct     = parseInt(policyInfo.copayPercentage.toString());
+    const deductibleAmt = Math.min(claimAmt, deductible);
+    const remaining    = claimAmt - deductibleAmt;
+    const copayAmt     = (remaining * copayPct) / 100;
+    setPayoutBreakdown({
+      claimAmount: claimAmt,
+      deductible:  deductibleAmt,
+      copay:       copayAmt,
+      patientPays: deductibleAmt + copayAmt,
+      insurerPays: remaining - copayAmt,
+    });
+  }, [formData.claimAmount, policyInfo]);
+
+  // ── FRAUD DETECTION ──────────────────────────────────────────────
+  const runFraudDetection = async () => {
+    if (!patientAddress || !formData.claimAmount || !policyInfo) return;
     const flags = [];
     try {
-      const cc = new web3.eth.Contract(ClaimContract.abi, CLAIM_CONTRACT_ADDRESS);
+      const cc     = new web3.eth.Contract(ClaimContract.abi, CLAIM_CONTRACT_ADDRESS);
       const allIds = await cc.methods.getAllClaims().call();
-      const patientClaims = [];
-      const hospitalClaims = [];
+      const patientClaims = [], hospitalClaims = [];
       for (const id of allIds) {
         try {
           const c = await cc.methods.getClaim(id).call();
-          if (c.patientAddress?.toLowerCase() === address.toLowerCase()) patientClaims.push(c);
-          if (c.hospitalAddress?.toLowerCase() === account.toLowerCase()) hospitalClaims.push(c);
+          if (c.patientAddress?.toLowerCase()  === patientAddress.toLowerCase()) patientClaims.push(c);
+          if (c.hospitalAddress?.toLowerCase() === account.toLowerCase())        hospitalClaims.push(c);
         } catch (_) {}
       }
-      const amt = parseFloat(claimAmt);
-      const txDate = treatmentDate ? new Date(treatmentDate) : null;
+      const amt      = parseFloat(formData.claimAmount);
+      const admDate  = formData.admissionDate ? new Date(formData.admissionDate) : null;
+      const disDate  = formData.dischargeDate ? new Date(formData.dischargeDate) : null;
+      const txDate   = formData.treatmentDate ? new Date(formData.treatmentDate) : null;
 
-      // Flag 1: Duplicate claim within 30 days of treatment date
-      if (txDate) {
+      // Flag 1: duplicate within 30 days of admission
+      if (admDate) {
         const recent = patientClaims.filter(c => {
           const ts = Number(c.submittedOn || 0) * 1000;
-          return ts && Math.abs(txDate - new Date(ts)) / (1000 * 60 * 60 * 24) <= 30;
+          return ts && Math.abs(admDate - new Date(ts)) / 86400000 <= 30;
         });
         if (recent.length > 0)
-          flags.push({ level: "high", text: `Patient has ${recent.length} claim(s) within 30 days of this treatment date.` });
+          flags.push({ level: "high", text: `Patient has ${recent.length} claim(s) within 30 days of this admission date.` });
       }
-
-      // Flag 2: Repeat claims in last 60 days
+      // Flag 2: repeat claims in last 60 days
       const last60 = patientClaims.filter(c => {
         const ts = Number(c.submittedOn || 0) * 1000;
-        return ts && (Date.now() - ts) / (1000 * 60 * 60 * 24) <= 60;
+        return ts && (Date.now() - ts) / 86400000 <= 60;
       });
       if (last60.length > 0)
         flags.push({ level: "medium", text: `Patient has ${last60.length} prior claim(s) in the last 60 days — possible repeat billing.` });
-
-      // Flag 3: High hospital claim frequency in last 7 days
+      // Flag 3: hospital high frequency
       const recentHosp = hospitalClaims.filter(c => {
         const ts = Number(c.submittedOn || 0) * 1000;
-        return ts && (Date.now() - ts) / (1000 * 60 * 60 * 24) <= 7;
+        return ts && (Date.now() - ts) / 86400000 <= 7;
       });
       if (recentHosp.length >= 5)
-        flags.push({ level: "medium", text: `This hospital has submitted ${recentHosp.length} claims in the last 7 days — high frequency alert.` });
-
-      // Flag 4: Claim amount significantly above patient's historical average
+        flags.push({ level: "medium", text: `This hospital has submitted ${recentHosp.length} claims in the last 7 days.` });
+      // Flag 4: amount spike
       if (patientClaims.length >= 2) {
         const avg = patientClaims.reduce((s, c) => s + parseFloat(web3.utils.fromWei(c.claimAmount?.toString() || "0", "ether")), 0) / patientClaims.length;
         if (amt > avg * 2.5)
           flags.push({ level: "high", text: `Claim amount is ${(amt / avg).toFixed(1)}× the patient's historical average — unusual spike.` });
       }
-    } catch (e) {
-      console.warn("Fraud detection error:", e.message);
-    }
+      // Flag 5: ward rate vs length of stay
+      const los  = parseInt(formData.lengthOfStay || 0);
+      const ward = parseFloat(formData.wardCharges || 0);
+      if (los > 0 && ward > 0 && (ward / los) > 0.05)
+        flags.push({ level: "low", text: `Daily ward rate (${(ward / los).toFixed(4)} ETH/day) appears unusually high for ${los} day(s).` });
+      // Flag 6: discharge before admission
+      if (admDate && disDate && disDate < admDate)
+        flags.push({ level: "high", text: "Discharge date is before admission date — data integrity issue." });
+      // Flag 7: treatment date outside admission-discharge range
+      if (admDate && disDate && txDate && (txDate < admDate || txDate > disDate))
+        flags.push({ level: "medium", text: "Treatment date is outside the admission–discharge range." });
+    } catch (e) { console.warn("Fraud detection error:", e.message); }
     setFraudFlags(flags);
   };
 
   useEffect(() => {
-    if (patientAddress && formData.claimAmount && policyInfo) {
-      runFraudDetection(patientAddress, formData.claimAmount, formData.treatmentDate);
-    } else {
-      setFraudFlags([]);
-    }
-  }, [patientAddress, formData.claimAmount, formData.treatmentDate, policyInfo]);
+    if (patientAddress && formData.claimAmount && policyInfo) runFraudDetection();
+    else setFraudFlags([]);
+  }, [patientAddress, formData.claimAmount, formData.admissionDate, formData.dischargeDate,
+      formData.treatmentDate, formData.lengthOfStay, formData.wardCharges, policyInfo]);
 
-
-
-  const lookupPatient = async () => {
-
-    setError(""); setPatientInfo(null); setPolicyInfo(null); setPayoutPreview(null);
-
-    if (!web3.utils.isAddress(patientAddress)) { setError("Invalid wallet address!"); return; }
-
-    try {
-
-      const uc = new web3.eth.Contract(UserRegistry.abi, USER_REGISTRY_ADDRESS);
-
-      const pc = new web3.eth.Contract(PolicyContract.abi, POLICY_CONTRACT_ADDRESS);
-
-      const isReg = await uc.methods.checkPatientRegistered(patientAddress).call();
-
-      if (!isReg) { setError("Patient not registered!"); return; }
-
-      const patient = await uc.methods.getPatient(patientAddress).call();
-
-      if (patient.status !== "Approved") { setError("Patient KYC not approved!"); return; }
-
-      setPatientInfo(patient);
-
-      const hasSub = await pc.methods.checkActivePolicy(patientAddress).call();
-
-      if (!hasSub) { setError("Patient has no active policy!"); return; }
-
-      const sub = await pc.methods.getSubscription(patientAddress).call();
-      const policy = await pc.methods.getPolicy(sub.policyId).call();
-      setPolicyInfo({ ...sub, coverageLimit: policy.coverageLimit, copayPercentage: policy.copayPercentage, deductible: policy.deductible });
-
-    } catch (err) { setError("Error: " + err.message); }
-
-  };
-
-
-
+  // ── VERIFICATION SCORE ───────────────────────────────────────────
   useEffect(() => {
-
-    const calc = async () => {
-
-      if (!policyInfo || !formData.claimAmount || isNaN(formData.claimAmount)) return;
-
-      try {
-
-        const pc = new web3.eth.Contract(PolicyContract.abi, POLICY_CONTRACT_ADDRESS);
-
-        const result = await pc.methods.calculateClaimPayout(patientAddress, web3.utils.toWei(formData.claimAmount, "ether")).call();
-
-        setPayoutPreview(result);
-
-      } catch {}
-
+    if (!formData.claimAmount || !policyInfo || !formData.primaryDiagnosis) { setVerificationStatus(null); return; }
+    const claimAmt      = parseFloat(formData.claimAmount);
+    const coverageLimit = parseFloat(formatETH(policyInfo.coverageLimit));
+    const calcTotal     = [formData.surgeryCharges, formData.otCharges, formData.anaesthesiaCharges,
+      formData.wardCharges, formData.medicinesCharges, formData.labCharges]
+      .reduce((s, v) => s + (parseFloat(v) || 0), 0);
+    const admDate  = formData.admissionDate ? new Date(formData.admissionDate) : null;
+    const disDate  = formData.dischargeDate ? new Date(formData.dischargeDate) : null;
+    const today    = new Date(); today.setHours(23, 59, 59, 999);
+    const validDates = admDate && disDate
+      ? admDate <= disDate && disDate <= today && admDate <= today : true;
+    const claimType         = (formData.treatmentName || "").toLowerCase();
+    const hasSurgeryCharges = parseFloat(formData.surgeryCharges || 0) > 0;
+    const hasOTCharges      = parseFloat(formData.otCharges || 0) > 0;
+    const hasWardCharges    = parseFloat(formData.wardCharges || 0) > 0;
+    let chargesConsistent   = true;
+    if (claimType.includes("surgery") || claimType.includes("surgical"))
+      chargesConsistent = hasSurgeryCharges || hasOTCharges;
+    else if (claimType.includes("inpatient") || claimType.includes("hospitalization"))
+      chargesConsistent = hasWardCharges;
+    const checks = {
+      withinCoverage:    claimAmt <= coverageLimit,
+      amountMatches:     calcTotal === 0 || Math.abs(calcTotal - claimAmt) < 0.0001,
+      hasDocumentation:  files.length > 0,
+      hasDiagnosis:      formData.primaryDiagnosis.length > 0,
+      hasDoctor:         formData.attendingDoctor.length > 0,
+      hasICD:            formData.icdCode.length > 0,
+      validDates,
+      notHighValue:      claimAmt <= coverageLimit * 0.80,
+      chargesConsistent,
     };
+    const passed = Object.values(checks).filter(Boolean).length;
+    const score  = Math.round((passed / Object.keys(checks).length) * 100);
+    setVerificationStatus({
+      score, checks,
+      isHighValue: !checks.notHighValue,
+      recommendation: score >= 80 ? "Auto-Approve Recommended" : score >= 60 ? "Manual Review Required" : "Additional Documentation Needed",
+    });
+  }, [formData, policyInfo, files]);
 
-    calc();
-
-  }, [formData.claimAmount, policyInfo]);
-
-
-
+  // ── UPLOAD TO PINATA ─────────────────────────────────────────────
   const uploadToPinata = async () => {
-
     if (files.length === 0) throw new Error("Please upload at least one document!");
-
     setUploading(true);
-
     try {
-
       const fd = new FormData();
-
       for (let f of files) fd.append("file", f);
-
       fd.append("pinataMetadata", JSON.stringify({ name: "ClaimDocs_" + patientAddress + "_" + Date.now() }));
-
       const res  = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
-
         method: "POST",
-
         headers: { pinata_api_key: PINATA_API_KEY, pinata_secret_api_key: PINATA_SECRET_KEY },
-
         body: fd,
-
       });
-
       const data = await res.json();
-
       setUploading(false);
-
       return data.IpfsHash || "QmTestCID_" + Date.now();
-
     } catch { setUploading(false); return "QmTestCID_" + Date.now(); }
-
   };
 
-
-
+  // ── SUBMIT ───────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
-
     e.preventDefault();
-
-    setError(""); setSuccess(""); setSubmitting(true);
-
+    if (submitting || uploading) return;
+    setError(""); setSuccess(""); setUploadProgress(""); setSubmitting(true);
     try {
+      setUploadProgress("⏳ Checking patient eligibility...");
+      const uc = new web3.eth.Contract(UserRegistry.abi, USER_REGISTRY_ADDRESS);
+      const isReg = await uc.methods.checkPatientRegistered(patientAddress).call();
+      if (!isReg) throw new Error("Patient not registered!");
+      const isApproved = await uc.methods.checkPatientApproved(patientAddress).call();
+      if (!isApproved) throw new Error("Patient KYC not approved!");
 
-      const ipfsCID = await uploadToPinata();
+      setUploadProgress("📤 Uploading documents to IPFS...");
+      const docCID = await uploadToPinata();
 
+      // ── Upload metadata JSON to IPFS ─────────────────────────────
+      setUploadProgress("📋 Uploading claim metadata to IPFS...");
+      const metadata = {
+        treatmentName:      formData.treatmentName,
+        treatmentDate:      formData.treatmentDate,
+        admissionDate:      formData.admissionDate,
+        dischargeDate:      formData.dischargeDate,
+        description:        formData.description,
+        primaryDiagnosis:   formData.primaryDiagnosis,
+        icdCode:            formData.icdCode,
+        procedurePerformed: formData.procedurePerformed,
+        lengthOfStay:       formData.lengthOfStay,
+        wardRoom:           formData.wardRoom,
+        attendingDoctor:    formData.attendingDoctor,
+        doctorRegNo:        formData.doctorRegNo,
+        billingDetails: {
+          surgeryCharges:      formData.surgeryCharges,
+          otCharges:           formData.otCharges,
+          anaesthesiaCharges:  formData.anaesthesiaCharges,
+          wardCharges:         formData.wardCharges,
+          medicinesCharges:    formData.medicinesCharges,
+          labCharges:          formData.labCharges,
+          totalAmount:         formData.claimAmount,
+        },
+        verificationStatus,
+        fraudFlags,
+        patientAddress,
+        patientName:  patientInfo?.name,
+        policyName:   policyInfo?.policyName,
+        hospitalAddress: account,
+        files: [{ fileName: files[0]?.name, cid: docCID }],
+        uploadedAt: new Date().toISOString(),
+      };
+
+      let ipfsCID = docCID;
+      try {
+        const metaBlob = new Blob([JSON.stringify(metadata)], { type: "application/json" });
+        const metaFile = new File([metaBlob], "claim-metadata.json", { type: "application/json" });
+        const fd2 = new FormData();
+        fd2.append("file", metaFile);
+        fd2.append("pinataMetadata", JSON.stringify({ name: "ClaimMeta_" + patientAddress + "_" + Date.now() }));
+        const res2 = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+          method: "POST",
+          headers: { pinata_api_key: PINATA_API_KEY, pinata_secret_api_key: PINATA_SECRET_KEY },
+          body: fd2,
+        });
+        const data2 = await res2.json();
+        if (data2.IpfsHash) ipfsCID = data2.IpfsHash;
+      } catch (metaErr) {
+        console.warn("Metadata upload failed, using doc CID:", metaErr.message);
+      }
+
+      setUploadProgress("⛓️ Submitting claim to blockchain...");
+      const treatmentDesc = `${formData.treatmentName}${formData.primaryDiagnosis ? " | Dx: " + formData.primaryDiagnosis : ""}${formData.attendingDoctor ? " | Dr: " + formData.attendingDoctor : ""}`;
       const cc = new web3.eth.Contract(ClaimContract.abi, CLAIM_CONTRACT_ADDRESS);
-
       await cc.methods.submitClaim(
-
-        patientAddress, formData.treatmentName, formData.treatmentDate,
-        formData.description, web3.utils.toWei(formData.claimAmount, "ether"), ipfsCID
-
+        patientAddress,
+        formData.treatmentName,
+        formData.treatmentDate,
+        treatmentDesc,
+        web3.utils.toWei(formData.claimAmount, "ether"),
+        ipfsCID
       ).send({ from: account });
 
-      setSuccess("Claim submitted successfully. The patient must confirm from their dashboard.");
-
-      setFormData({ treatmentName:"", treatmentDate:"", claimAmount:"", description:"" });
-
-      setFiles([]); setPatientInfo(null); setPolicyInfo(null); setPatientAddress("");
-
-    } catch (err) { setError("Error: " + err.message); }
-
-    setSubmitting(false);
-
+      setUploadProgress("");
+      setSuccess("✅ Claim submitted successfully! The patient must confirm from their dashboard.");
+      setTimeout(() => navigate("/hospital/dashboard"), 2000);
+    } catch (err) { setError("❌ Error: " + err.message); setUploadProgress(""); }
+    setSubmitting(false); setUploading(false);
   };
 
-
-
-  const formatETH = (wei) => parseFloat(web3.utils.fromWei(wei.toString(), "ether")).toFixed(4);
-
-
-
+  // ── RENDER ───────────────────────────────────────────────────────
   return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .sc-page { min-height: 100vh; background: #F5F7FA; font-family: 'Inter', sans-serif; padding: 2rem; }
+        .sc-container { max-width: 1000px; margin: 0 auto; }
+        .sc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+        .sc-title { font-size: 1.75rem; font-weight: 700; color: #2D3748; }
+        .back-btn { background: #fff; color: #4A5568; padding: 0.625rem 1.25rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .back-btn:hover { background: #F7FAFC; border-color: #CBD5E0; }
+        .step-card { background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .step-header { font-size: 1.125rem; font-weight: 600; color: #2D3748; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #E2E8F0; }
+        .search-row { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .search-input { flex: 1; padding: 0.75rem 1rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; font-family: 'Inter', monospace; }
+        .search-btn { background: #3182CE; color: #fff; padding: 0.75rem 2rem; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .search-btn:hover { background: #2C5282; }
+        .search-btn:disabled { background: #CBD5E0; cursor: not-allowed; }
+        .patient-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .info-item { display: flex; flex-direction: column; gap: 0.25rem; }
+        .info-label { font-size: 0.75rem; color: #718096; font-weight: 600; }
+        .info-value { font-size: 0.875rem; color: #2D3748; font-weight: 500; }
+        .policy-card { background: linear-gradient(135deg, #E9D5FF 0%, #DDD6FE 100%); border-radius: 12px; padding: 1.5rem; }
+        .policy-card-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; color: #6B21A8; margin-bottom: 1rem; }
+        .policy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .policy-label { font-size: 0.75rem; color: #7C3AED; font-weight: 600; }
+        .policy-value { font-size: 0.875rem; color: #6B21A8; font-weight: 600; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #2D3748; }
+        .form-input { padding: 0.75rem 1rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; font-family: 'Inter', sans-serif; }
+        .form-input:focus { outline: none; border-color: #3182CE; box-shadow: 0 0 0 3px rgba(49,130,206,0.1); }
+        .form-textarea { padding: 0.75rem 1rem; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 100px; }
+        .file-input { padding: 0.75rem; border: 2px dashed #E2E8F0; border-radius: 8px; font-size: 0.875rem; cursor: pointer; }
+        .section-divider { font-size: 1rem; font-weight: 700; color: #1E293B; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #E2E8F0; }
+        .payout-box { background: #F7FAFC; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+        .payout-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; color: #2D3748; margin-bottom: 1rem; }
+        .payout-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #E2E8F0; }
+        .payout-row:last-child { border-bottom: none; border-top: 2px solid #E2E8F0; padding-top: 1rem; margin-top: 0.5rem; }
+        .payout-label { font-size: 0.875rem; color: #718096; }
+        .payout-val { font-size: 0.875rem; font-weight: 600; color: #2D3748; }
+        .payout-val.green { font-size: 1rem; color: #38A169; }
+        .payout-val.red { color: #E53E3E; }
+        .submit-btn { width: 100%; background: #3182CE; color: #fff; padding: 1rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 2rem; }
+        .submit-btn:hover { background: #2C5282; }
+        .submit-btn:disabled { background: #CBD5E0; cursor: not-allowed; }
+        .msg-error    { background: #FED7D7; color: #C53030; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.875rem; }
+        .msg-success  { background: #C6F6D5; color: #2F855A; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.875rem; }
+        .msg-progress { background: #BEE3F8; color: #2C5282; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.875rem; }
+        @media (max-width: 768px) {
+          .sc-page { padding: 1rem; }
+          .form-grid, .patient-grid, .policy-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
 
-    <div style={S.page}>
+      <div className="sc-page">
+        <div className="sc-container">
 
-      <div style={S.topbar}>
-
-        <div style={S.topbarBrand}>
-
-          <div style={S.topbarLogo}>M</div>
-
-          <div><div style={S.topbarName}>MedInsure</div><div style={S.topbarSub}>Blockchain Health Insurance</div></div>
-
-        </div>
-
-        <div style={S.topbarCenter}><span style={S.topbarPageLabel}>Submit Claim</span></div>
-
-        <div style={S.topbarRight}>
-
-          <div style={S.walletPill}><div style={S.walletDot}/><span style={S.walletAddr}>{account.slice(0,8)}...{account.slice(-6)}</span></div>
-
-          <button style={S.backBtn} onClick={() => navigate("/hospital/dashboard")}>← Dashboard</button>
-
-        </div>
-
-      </div>
-
-
-
-      <div style={S.mainWrap}>
-
-        <div style={S.pageHeader}>
-
-          <div style={S.secLabel}>HOSPITAL PORTAL</div>
-
-          <h1 style={S.pageTitle}>Submit a New Claim</h1>
-
-          <p style={S.pageSubtitle}>Complete the steps below to submit an IPFS-secured claim on the blockchain</p>
-
-        </div>
-
-
-
-        {success && <div style={S.successBanner}><div style={S.bannerIcon}>✓</div>{success}</div>}
-
-        {error   && <div style={S.errorBanner}><div style={S.bannerIconErr}>!</div>{error}</div>}
-
-
-
-        {/* STEP 1 */}
-
-        <div style={S.card}>
-
-          <div style={S.cardHeader}>
-
-            <div style={S.stepBadge}>01</div>
-
-            <div><div style={S.cardHeaderTitle}>Find Patient</div><div style={S.cardHeaderSub}>Enter the patient's wallet address to verify registration and active policy</div></div>
-
-            {patientInfo && <div style={S.doneBadge}>Verified</div>}
-
+          {/* Header */}
+          <div className="sc-header">
+            <h1 className="sc-title">Submit Insurance Claim</h1>
+            <button className="back-btn" onClick={() => navigate("/hospital/dashboard")}>← Back to Dashboard</button>
           </div>
 
-          <div style={S.cardBody}>
+          {/* Banners */}
+          {error        && <div className="msg-error">{error}</div>}
+          {success      && <div className="msg-success">{success}</div>}
+          {uploadProgress && <div className="msg-progress">{uploadProgress}</div>}
 
-            <div style={S.lookupRow}>
-
-              <input style={S.input} type="text" placeholder="Enter patient wallet address (0x...)" value={patientAddress} onChange={e => setPatientAddress(e.target.value)}/>
-
-              <button style={S.searchBtn} onClick={lookupPatient}>Search</button>
-
+          {/* STEP 1 */}
+          <div className="step-card">
+            <h2 className="step-header">Step 1 — Find Patient</h2>
+            <div className="search-row">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Enter patient wallet address (0x...)"
+                value={patientAddress}
+                onChange={(e) => setPatientAddress(e.target.value)}
+              />
+              <button
+                className="search-btn"
+                onClick={lookupPatient}
+                disabled={searching || !patientAddress}
+              >
+                {searching ? "Searching..." : "🔍 Search"}
+              </button>
             </div>
+            {searchError && <div className="msg-error">{searchError}</div>}
 
             {patientInfo && (
-
-              <div style={S.patientResult}>
-
-                <div style={S.resultSectionLabel}>Patient Information</div>
-
-                <div style={S.infoGrid}>
-
-                  {[["Name",patientInfo.name],["Mobile",patientInfo.mobile],["Gender",patientInfo.gender],["KYC Status",patientInfo.status]].map(([l,v],i)=>(
-
-                    <InfoItem key={i} label={l} value={v} highlight={l==="KYC Status"}/>
-
-                  ))}
-
+              <>
+                <div className="patient-grid">
+                  <div className="info-item"><span className="info-label">Name</span><span className="info-value">{patientInfo.name}</span></div>
+                  <div className="info-item"><span className="info-label">Mobile</span><span className="info-value">{patientInfo.mobile}</span></div>
+                  <div className="info-item"><span className="info-label">Gender</span><span className="info-value">{patientInfo.gender}</span></div>
+                  <div className="info-item"><span className="info-label">Status</span><span className="info-value">{patientInfo.status}</span></div>
                 </div>
-
                 {policyInfo && (
-
-                  <div style={S.policyBox}>
-
-                    <div style={S.resultSectionLabel}>Active Policy</div>
-
-                    <div style={S.infoGrid}>
-
-                      {[["Policy Name",policyInfo.policyName],["Coverage",formatETH(policyInfo.coverageLimit)+" ETH"],["Co-pay",policyInfo.copayPercentage.toString()+"%"],["Deductible",formatETH(policyInfo.deductible)+" ETH"]].map(([l,v],i)=>(
-
-                        <InfoItem key={i} label={l} value={v}/>
-
-                      ))}
-
+                  <div className="policy-card">
+                    <div className="policy-card-title">🛡️ Active Policy</div>
+                    <div className="policy-grid">
+                      <div className="info-item"><span className="policy-label">Policy</span><span className="policy-value">{policyInfo.policyName}</span></div>
+                      <div className="info-item"><span className="policy-label">Coverage Limit</span><span className="policy-value">{formatETH(policyInfo.coverageLimit)} ETH</span></div>
+                      <div className="info-item"><span className="policy-label">Co-pay</span><span className="policy-value">{policyInfo.copayPercentage.toString()}%</span></div>
+                      <div className="info-item"><span className="policy-label">Deductible</span><span className="policy-value">{formatETH(policyInfo.deductible)} ETH</span></div>
                     </div>
-
                   </div>
-
                 )}
-
-              </div>
-
+              </>
             )}
-
           </div>
 
-        </div>
+          {/* STEP 2 — only after patient found */}
+          {patientInfo && policyInfo && (
+            <form onSubmit={handleSubmit}>
+              <div className="step-card">
+                <h2 className="step-header">Step 2 — Claim Details</h2>
+                <div className="form-grid">
 
-
-
-        {/* STEP 2 */}
-
-        {patientInfo && policyInfo && (
-
-          <div style={S.card}>
-
-            <div style={S.cardHeader}>
-
-              <div style={S.stepBadge}>02</div>
-
-              <div><div style={S.cardHeaderTitle}>Claim Details</div><div style={S.cardHeaderSub}>Enter treatment information and upload supporting documents</div></div>
-
-            </div>
-
-            <div style={S.cardBody}>
-
-              <form onSubmit={handleSubmit}>
-
-                <div style={S.formGrid}>
-
-                  <div style={S.formGroup}>
-
-                    <label style={S.label}>Treatment Name</label>
-
-                    <input style={S.input} type="text" name="treatmentName" placeholder="e.g. Knee Surgery" value={formData.treatmentName} onChange={handleChange} required/>
-
+                  {/* Treatment Info */}
+                  <div className="form-group">
+                    <label className="form-label">Treatment / Procedure Name *</label>
+                    <input type="text" className="form-input" placeholder="e.g., Arthroscopic Partial Medial Meniscectomy"
+                      value={formData.treatmentName} onChange={(e) => setFormData({ ...formData, treatmentName: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Primary Diagnosis *</label>
+                    <input type="text" className="form-input" placeholder="e.g., Medial Meniscus Tear — Right Knee"
+                      value={formData.primaryDiagnosis} onChange={(e) => setFormData({ ...formData, primaryDiagnosis: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">ICD-10 Code</label>
+                    <input type="text" className="form-input" placeholder="e.g., M23.201"
+                      value={formData.icdCode} onChange={(e) => setFormData({ ...formData, icdCode: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Procedure Performed</label>
+                    <input type="text" className="form-input" placeholder="e.g., Arthroscopic Surgery"
+                      value={formData.procedurePerformed} onChange={(e) => setFormData({ ...formData, procedurePerformed: e.target.value })} />
                   </div>
 
-                  <div style={S.formGroup}>
-
-                    <label style={S.label}>Treatment Date</label>
-
-                    <input style={S.input} type="date" name="treatmentDate" value={formData.treatmentDate} onChange={handleChange} required/>
-
+                  {/* Dates */}
+                  <div className="form-group">
+                    <label className="form-label">Admission Date *</label>
+                    <input type="date" className="form-input"
+                      value={formData.admissionDate} onChange={(e) => setFormData({ ...formData, admissionDate: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Discharge Date *</label>
+                    <input type="date" className="form-input"
+                      value={formData.dischargeDate} onChange={(e) => setFormData({ ...formData, dischargeDate: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Treatment Date *</label>
+                    <input type="date" className="form-input"
+                      value={formData.treatmentDate} onChange={(e) => setFormData({ ...formData, treatmentDate: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Length of Stay (days)</label>
+                    <input type="number" className="form-input" placeholder="e.g., 2"
+                      value={formData.lengthOfStay} onChange={(e) => setFormData({ ...formData, lengthOfStay: e.target.value })} />
                   </div>
 
-                  <div style={S.formGroup}>
-
-                    <label style={S.label}>Claim Amount (ETH)</label>
-
-                    <input style={S.input} type="number" name="claimAmount" placeholder="e.g. 0.37" min="0.001" step="0.001" value={formData.claimAmount} onChange={handleChange} required/>
-
+                  {/* Ward & Doctor */}
+                  <div className="form-group">
+                    <label className="form-label">Ward / Room</label>
+                    <input type="text" className="form-input" placeholder="e.g., Orthopaedic Ward — Room 204"
+                      value={formData.wardRoom} onChange={(e) => setFormData({ ...formData, wardRoom: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Attending Doctor *</label>
+                    <input type="text" className="form-input" placeholder="e.g., Dr. Ramesh Nair, MS (Ortho)"
+                      value={formData.attendingDoctor} onChange={(e) => setFormData({ ...formData, attendingDoctor: e.target.value })} required />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Doctor Registration No</label>
+                    <input type="text" className="form-input" placeholder="e.g., TN-MED-48291"
+                      value={formData.doctorRegNo} onChange={(e) => setFormData({ ...formData, doctorRegNo: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Upload Documents (discharge summary, bills) *</label>
+                    <input type="file" className="file-input" multiple onChange={(e) => setFiles(Array.from(e.target.files))} required />
                   </div>
 
-                  <div style={S.formGroup}>
-
-                    <label style={S.label}>Upload Documents</label>
-
-                    <label style={S.fileLabel}>
-
-                      <input style={{display:"none"}} type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onChange={e => setFiles(Array.from(e.target.files))}/>
-
-                      <span style={S.fileBtn}>Choose Files</span>
-
-                      <span style={S.fileHint}>{files.length > 0 ? `${files.length} file(s) selected` : "Bills, discharge summary, reports"}</span>
-
-                    </label>
-
+                  {/* Billing Breakdown */}
+                  <div className="form-group full">
+                    <div className="section-divider">Billing Breakdown</div>
                   </div>
-
+                  <div className="form-group">
+                    <label className="form-label">Surgery Charges (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 1.0000"
+                      value={formData.surgeryCharges} onChange={(e) => setFormData({ ...formData, surgeryCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">OT Charges (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 0.2000"
+                      value={formData.otCharges} onChange={(e) => setFormData({ ...formData, otCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Anaesthesia Charges (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 0.1000"
+                      value={formData.anaesthesiaCharges} onChange={(e) => setFormData({ ...formData, anaesthesiaCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Ward Charges (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 0.1000"
+                      value={formData.wardCharges} onChange={(e) => setFormData({ ...formData, wardCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Medicines & Consumables (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 0.0700"
+                      value={formData.medicinesCharges} onChange={(e) => setFormData({ ...formData, medicinesCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Lab Investigations (ETH)</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 0.0300"
+                      value={formData.labCharges} onChange={(e) => setFormData({ ...formData, labCharges: e.target.value })} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Total Claim Amount (ETH) *</label>
+                    <input type="number" step="0.0001" className="form-input" placeholder="e.g., 1.5000"
+                      value={formData.claimAmount} onChange={(e) => setFormData({ ...formData, claimAmount: e.target.value })}
+                      required style={{ fontWeight: 700, fontSize: "1.125rem" }} />
+                  </div>
+                  <div className="form-group full">
+                    <label className="form-label">Additional Notes / Discharge Instructions</label>
+                    <textarea className="form-textarea" placeholder="Enter any additional medical notes, discharge instructions, or follow-up requirements..."
+                      value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                  </div>
                 </div>
 
-                <div style={S.formGroup}>
-
-                  <label style={S.label}>Description / Notes</label>
-
-                  <textarea style={S.textarea} name="description" placeholder="Describe the treatment and relevant clinical details..." value={formData.description} onChange={handleChange} required/>
-
-                </div>
-
-                {payoutPreview && formData.claimAmount && (
-
-                  <div style={S.payoutBox}>
-
-                    <div style={S.payoutTitle}>Payout Breakdown</div>
-
-                    <div style={S.payoutSub}>Calculated from policy co-pay and deductible terms</div>
-
-                    {[
-
-                      {label:"Total Claim Amount",value:formData.claimAmount+" ETH",color:"#0d1b35",bold:false},
-
-                      {label:"Patient Pays (Deductible + Co-pay)",value:formatETH(payoutPreview.patientPays)+" ETH",color:"#c62828",bold:false},
-
-                      {label:"Insurer Pays → Hospital",value:formatETH(payoutPreview.insurerPays)+" ETH",color:"#2e7d32",bold:true},
-
-                    ].map((row,i)=>(
-
-                      <div key={i} style={{...S.payoutRow,borderBottom:i<2?"1px solid #eef1f8":"none"}}>
-
-                        <span style={S.payoutLabel}>{row.label}</span>
-
-                        <span style={{...S.payoutValue,color:row.color,fontWeight:row.bold?"900":"600",fontSize:row.bold?"16px":"14px"}}>{row.value}</span>
-
+                {/* Verification Score */}
+                {verificationStatus && (
+                  <div style={{
+                    background: verificationStatus.score >= 80 ? "#E8F5E9" : verificationStatus.score >= 60 ? "#FFFBEB" : "#FFEBEE",
+                    border: `2px solid ${verificationStatus.score >= 80 ? "#22C55E" : verificationStatus.score >= 60 ? "#F59E0B" : "#EF4444"}`,
+                    borderRadius: 12, padding: "1.5rem", marginTop: "1.5rem"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+                      <span style={{ fontSize: "1.5rem" }}>
+                        {verificationStatus.score >= 80 ? "✅" : verificationStatus.score >= 60 ? "⚠️" : "❌"}
+                      </span>
+                      <div>
+                        <div style={{ fontSize: "1rem", fontWeight: 700, color: "#1E293B" }}>
+                          Verification Score: {verificationStatus.score}%
+                        </div>
+                        <div style={{ fontSize: "0.875rem", color: "#475569", marginTop: "0.25rem" }}>
+                          {verificationStatus.recommendation}
+                        </div>
                       </div>
-
-                    ))}
-
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.5rem", fontSize: "0.875rem" }}>
+                      {[
+                        ["withinCoverage",    "Within Coverage Limit"],
+                        ["amountMatches",     "Amount Breakdown Matches"],
+                        ["hasDocumentation",  "Documents Uploaded"],
+                        ["hasDiagnosis",      "Diagnosis Provided"],
+                        ["hasDoctor",         "Doctor Information"],
+                        ["hasICD",            "ICD Code Provided"],
+                        ["validDates",        "Admission / Discharge Dates Valid"],
+                        ["chargesConsistent", "Charges Match Claim Type"],
+                      ].map(([key, label]) => (
+                        <div key={key} style={{ color: verificationStatus.checks[key] ? "#22C55E" : "#EF4444" }}>
+                          {verificationStatus.checks[key] ? "✅" : "❌"} {label}
+                        </div>
+                      ))}
+                      <div style={{ color: verificationStatus.checks.notHighValue ? "#22C55E" : "#FBBF24" }}>
+                        {verificationStatus.checks.notHighValue ? "✅" : "⚠️"}{" "}
+                        {verificationStatus.isHighValue ? "High-Value Claim — Enhanced Review" : "Amount Within Normal Range"}
+                      </div>
+                    </div>
                   </div>
-
                 )}
 
-                {/* FRAUD DETECTION PANEL */}
+                {/* Fraud Detection */}
                 {fraudFlags.length > 0 && (
-                  <div style={{background:"#fff5f5",border:"2px solid #fc8181",borderRadius:"12px",padding:"16px 20px",marginBottom:"16px"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"10px"}}>
-                      <span style={{fontSize:"18px"}}>⚠️</span>
-                      <span style={{fontWeight:"800",fontSize:"13px",color:"#c62828"}}>Fraud Risk Indicators Detected ({fraudFlags.length})</span>
+                  <div style={{ background: "#FFF5F5", border: "2px solid #FC8181", borderRadius: 12, padding: "1.25rem 1.5rem", marginTop: "1rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                      <span style={{ fontSize: "1.2rem" }}>🚨</span>
+                      <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "#DC2626" }}>
+                        Fraud Risk Indicators Detected ({fraudFlags.length})
+                      </span>
                     </div>
                     {fraudFlags.map((f, i) => (
-                      <div key={i} style={{display:"flex",alignItems:"flex-start",gap:"8px",padding:"7px 10px",marginBottom:"6px",borderRadius:"6px",background:f.level==="high"?"#fee2e2":f.level==="medium"?"#fef3c7":"#fefcbf",borderLeft:`3px solid ${f.level==="high"?"#ef4444":"#d97706"}`}}>
-                        <span style={{fontSize:"10px",fontWeight:"800",marginTop:"2px",color:f.level==="high"?"#dc2626":"#b45309",textTransform:"uppercase",flexShrink:0}}>{f.level}</span>
-                        <span style={{fontSize:"12px",color:"#1e293b",lineHeight:1.5}}>{f.text}</span>
+                      <div key={i} style={{
+                        display: "flex", alignItems: "flex-start", gap: "0.5rem",
+                        padding: "0.5rem 0.75rem", marginBottom: "0.4rem", borderRadius: 6,
+                        background: f.level === "high" ? "#FEE2E2" : f.level === "medium" ? "#FEF3C7" : "#FEFCBF",
+                        borderLeft: `3px solid ${f.level === "high" ? "#EF4444" : "#D97706"}`
+                      }}>
+                        <span style={{ fontSize: "0.75rem", fontWeight: 700, color: f.level === "high" ? "#DC2626" : f.level === "medium" ? "#B45309" : "#92400E", textTransform: "uppercase", flexShrink: 0 }}>
+                          {f.level}
+                        </span>
+                        <span style={{ fontSize: "0.82rem", color: "#1E293B" }}>{f.text}</span>
                       </div>
                     ))}
-                    <p style={{fontSize:"11px",color:"#64748b",margin:"8px 0 0"}}>These flags are advisory. The insurer will review them during claim assessment.</p>
+                    <p style={{ fontSize: "0.75rem", color: "#64748B", margin: "0.5rem 0 0" }}>
+                      These flags are advisory. The insurer will review them during claim assessment.
+                    </p>
                   </div>
                 )}
 
-                <button style={{...S.submitBtn,background:submitting||uploading?"#90a4ae":"#1565c0",cursor:submitting||uploading?"not-allowed":"pointer"}} type="submit" disabled={submitting||uploading}>
+                {/* Payout Breakdown */}
+                {payoutBreakdown && (
+                  <div className="payout-box">
+                    <div className="payout-title">💰 Payout Breakdown</div>
+                    <div className="payout-row">
+                      <span className="payout-label">Claim Amount</span>
+                      <span className="payout-val">{payoutBreakdown.claimAmount.toFixed(4)} ETH</span>
+                    </div>
+                    <div className="payout-row">
+                      <span className="payout-label">Deductible Applied</span>
+                      <span className="payout-val">− {payoutBreakdown.deductible.toFixed(4)} ETH</span>
+                    </div>
+                    <div className="payout-row">
+                      <span className="payout-label">Co-pay Applied</span>
+                      <span className="payout-val">− {payoutBreakdown.copay.toFixed(4)} ETH</span>
+                    </div>
+                    <div className="payout-row">
+                      <span className="payout-label">Patient Pays (Deductible + Co-pay)</span>
+                      <span className="payout-val red">{payoutBreakdown.patientPays.toFixed(4)} ETH</span>
+                    </div>
+                    <div className="payout-row">
+                      <span className="payout-label">Insurer Pays → Hospital</span>
+                      <span className="payout-val green">{payoutBreakdown.insurerPays.toFixed(4)} ETH</span>
+                    </div>
+                  </div>
+                )}
 
-                  {uploading?"Uploading to IPFS...":submitting?"Submitting to Blockchain...":"Submit Claim →"}
-
+                <button type="submit" className="submit-btn" disabled={submitting || uploading}>
+                  {submitting || uploading ? "⏳ Submitting..." : "🚀 Submit Claim"}
                 </button>
+              </div>
+            </form>
+          )}
 
-                <div style={S.submitNote}>Documents are encrypted and stored on IPFS. Claim is recorded immutably on Ethereum.</div>
-
-              </form>
-
-            </div>
-
-          </div>
-
-        )}
-
+        </div>
       </div>
-
-
-
-      <div style={S.footer}>
-
-        <span>© 2026 MedInsure</span>
-
-        <span>Powered by Ethereum Blockchain and IPFS</span>
-
-        <span>Hospital Portal v1.0</span>
-
-      </div>
-
-    </div>
-
+    </>
   );
-
 }
-
-
-
-function InfoItem({ label, value, highlight }) {
-
-  return (
-
-    <div style={{padding:"9px 0",borderBottom:"1px solid #eef1f8"}}>
-
-      <span style={{color:"#7a8aa8",fontSize:"11px",fontWeight:"800",textTransform:"uppercase",letterSpacing:"0.4px",display:"block",marginBottom:"3px"}}>{label}</span>
-
-      <span style={{color:highlight?"#2e7d32":"#0d1b35",fontSize:"13px",fontWeight:"600"}}>{value}</span>
-
-    </div>
-
-  );
-
-}
-
-
-
-const S = {
-
-  page:{background:"#f4f7fc",minHeight:"100vh",fontFamily:"'Arial',sans-serif",color:"#1a237e"},
-
-  topbar:{background:"#fff",borderBottom:"1px solid #dde3ef",padding:"0 40px",height:"68px",display:"flex",alignItems:"center",gap:"24px",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 0 #dde3ef"},
-
-  topbarBrand:{display:"flex",alignItems:"center",gap:"10px",flexShrink:0},
-
-  topbarLogo:{width:"38px",height:"38px",background:"#1565c0",borderRadius:"9px",color:"#fff",fontSize:"19px",fontWeight:"900",display:"flex",alignItems:"center",justifyContent:"center"},
-
-  topbarName:{fontSize:"16px",fontWeight:"800",color:"#1a237e",lineHeight:1.2},
-
-  topbarSub:{fontSize:"10px",color:"#8fa0c0",letterSpacing:"0.4px"},
-
-  topbarCenter:{flex:1,display:"flex",justifyContent:"center"},
-
-  topbarPageLabel:{fontSize:"14px",fontWeight:"700",color:"#3a4a6b",background:"#eef3fb",padding:"6px 16px",borderRadius:"5px"},
-
-  topbarRight:{display:"flex",alignItems:"center",gap:"12px",flexShrink:0},
-
-  walletPill:{display:"flex",alignItems:"center",gap:"7px",background:"#eef3fb",border:"1px solid #c5d5e8",borderRadius:"20px",padding:"6px 14px"},
-
-  walletDot:{width:"8px",height:"8px",borderRadius:"50%",background:"#2e7d32",flexShrink:0},
-
-  walletAddr:{fontSize:"12px",color:"#1a237e",fontWeight:"700"},
-
-  backBtn:{background:"#fff",color:"#1565c0",border:"2px solid #1565c0",padding:"8px 18px",borderRadius:"6px",cursor:"pointer",fontSize:"12px",fontWeight:"700"},
-
-  mainWrap:{maxWidth:"900px",margin:"0 auto",padding:"36px 36px 60px"},
-
-  pageHeader:{marginBottom:"28px"},
-
-  secLabel:{display:"inline-block",background:"#e3eaf5",color:"#1565c0",padding:"4px 12px",borderRadius:"3px",fontSize:"11px",fontWeight:"800",letterSpacing:"1.2px",marginBottom:"10px"},
-
-  pageTitle:{fontSize:"28px",fontWeight:"700",color:"#0d1b35",margin:"0 0 6px",fontFamily:"'Georgia',serif"},
-
-  pageSubtitle:{fontSize:"14px",color:"#7a8aa8",margin:0},
-
-  successBanner:{display:"flex",alignItems:"center",gap:"10px",background:"#e8f5e9",border:"1px solid #a5d6a7",borderRadius:"8px",padding:"14px 18px",marginBottom:"20px",fontSize:"14px",color:"#2e7d32",fontWeight:"600"},
-
-  errorBanner:{display:"flex",alignItems:"center",gap:"10px",background:"#ffebee",border:"1px solid #ef9a9a",borderRadius:"8px",padding:"14px 18px",marginBottom:"20px",fontSize:"14px",color:"#c62828",fontWeight:"600"},
-
-  bannerIcon:{width:"24px",height:"24px",borderRadius:"50%",background:"#2e7d32",color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:"900",flexShrink:0},
-
-  bannerIconErr:{width:"24px",height:"24px",borderRadius:"50%",background:"#c62828",color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:"900",flexShrink:0},
-
-  card:{background:"#fff",borderRadius:"14px",border:"1px solid #dde3ef",boxShadow:"0 2px 12px rgba(0,0,0,0.05)",marginBottom:"20px",overflow:"hidden"},
-
-  cardHeader:{display:"flex",alignItems:"center",gap:"14px",padding:"20px 24px",borderBottom:"1px solid #eef1f8",background:"#fafbfe"},
-
-  stepBadge:{width:"36px",height:"36px",borderRadius:"9px",background:"#1565c0",color:"#fff",fontSize:"14px",fontWeight:"900",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0},
-
-  cardHeaderTitle:{fontSize:"15px",fontWeight:"700",color:"#0d1b35",fontFamily:"'Georgia',serif",marginBottom:"2px"},
-
-  cardHeaderSub:{fontSize:"12px",color:"#8fa0c0"},
-
-  doneBadge:{marginLeft:"auto",background:"#e8f5e9",color:"#2e7d32",border:"1px solid #a5d6a7",fontSize:"11px",fontWeight:"800",padding:"4px 12px",borderRadius:"4px"},
-
-  cardBody:{padding:"24px"},
-
-  lookupRow:{display:"flex",gap:"10px",alignItems:"center"},
-
-  searchBtn:{background:"#1565c0",color:"#fff",border:"none",padding:"11px 24px",borderRadius:"7px",cursor:"pointer",fontSize:"13px",fontWeight:"700",whiteSpace:"nowrap",flexShrink:0},
-
-  patientResult:{background:"#f4f7fc",borderRadius:"10px",padding:"18px",marginTop:"16px",border:"1px solid #dde3ef"},
-
-  resultSectionLabel:{fontSize:"11px",fontWeight:"800",color:"#7a8aa8",textTransform:"uppercase",letterSpacing:"0.8px",marginBottom:"10px"},
-
-  infoGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 24px"},
-
-  policyBox:{marginTop:"16px",paddingTop:"16px",borderTop:"1px solid #dde3ef"},
-
-  formGrid:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px",marginBottom:"16px"},
-
-  formGroup:{marginBottom:"0"},
-
-  label:{display:"block",fontSize:"11px",color:"#7a8aa8",fontWeight:"800",textTransform:"uppercase",letterSpacing:"0.5px",marginBottom:"7px"},
-
-  input:{width:"100%",padding:"11px 13px",borderRadius:"7px",border:"1px solid #dde3ef",fontSize:"13px",boxSizing:"border-box",color:"#0d1b35",background:"#fff",outline:"none"},
-
-  fileLabel:{display:"flex",alignItems:"center",gap:"10px",cursor:"pointer"},
-
-  fileBtn:{background:"#eef3fb",color:"#1565c0",border:"1px solid #c5d5e8",padding:"8px 14px",borderRadius:"6px",fontSize:"12px",fontWeight:"700",whiteSpace:"nowrap"},
-
-  fileHint:{fontSize:"12px",color:"#8fa0c0"},
-
-  textarea:{width:"100%",padding:"11px 13px",borderRadius:"7px",border:"1px solid #dde3ef",fontSize:"13px",boxSizing:"border-box",minHeight:"88px",resize:"vertical",color:"#0d1b35",fontFamily:"'Arial',sans-serif",outline:"none"},
-
-  payoutBox:{background:"#f4f7fc",borderRadius:"10px",padding:"20px",marginBottom:"20px",border:"1px solid #dde3ef"},
-
-  payoutTitle:{fontSize:"14px",fontWeight:"700",color:"#0d1b35",fontFamily:"'Georgia',serif"},
-
-  payoutSub:{fontSize:"12px",color:"#8fa0c0",marginTop:"2px",marginBottom:"12px"},
-
-  payoutRow:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0"},
-
-  payoutLabel:{fontSize:"13px",color:"#5a6a88"},
-
-  payoutValue:{fontFamily:"'Arial',sans-serif"},
-
-  submitBtn:{width:"100%",padding:"14px",border:"none",borderRadius:"8px",color:"#fff",fontSize:"15px",fontWeight:"700",letterSpacing:"0.3px",marginBottom:"12px"},
-
-  submitNote:{fontSize:"11px",color:"#a0b0c8",textAlign:"center",lineHeight:1.6},
-
-  footer:{borderTop:"1px solid #dde3ef",background:"#fff",padding:"18px 40px",display:"flex",justifyContent:"space-between",fontSize:"12px",color:"#a0b0c8",flexWrap:"wrap",gap:"8px"},
-
-};
-
-
 
 export default SubmitClaim;
-

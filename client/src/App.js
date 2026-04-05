@@ -31,8 +31,8 @@ import Home from "./components/Home";
 import UserRegistry     from "./contracts/UserRegistry.json";
 import HospitalRegistry from "./contracts/HospitalRegistry.json";
 
-const USER_REGISTRY_ADDRESS     = "0x7AA9894AC875d5614Eebe2109BFD57f9f8930c4d";
-const HOSPITAL_REGISTRY_ADDRESS = "0x15C66Cb55D25d1559083b140117B8b064c8ea3d8";
+const USER_REGISTRY_ADDRESS     = "0xfAb58c1c5B6486aBb2324270948581D4E4C8322D";
+const HOSPITAL_REGISTRY_ADDRESS = "0xD379aacA4167c27038ad8579782c7D8bc60d662D";
 const INSURER_ADDRESS           = "0x5a056215D5834A0E36f0A411683E1156EB68012d";
 
 function App() {

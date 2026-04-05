@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import HospitalRegistry from "../../contracts/HospitalRegistry.json";
 import ClaimContract    from "../../contracts/ClaimContract.json";
 
-const CONTRACT_ADDRESS       = "0x15C66Cb55D25d1559083b140117B8b064c8ea3d8";
-const CLAIM_CONTRACT_ADDRESS = "0x71eF08435556B638e6086cBa29929CABDAa80eEA";
+const CONTRACT_ADDRESS       = "0xD379aacA4167c27038ad8579782c7D8bc60d662D";
+const CLAIM_CONTRACT_ADDRESS = "0xE84B25aAeE6Bd9efeD250f2327F1Ec47ed44d40e";
 
 function HospitalDashboard({ account, web3 }) {
   const navigate = useNavigate();
